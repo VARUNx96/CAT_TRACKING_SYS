@@ -1,11 +1,15 @@
+"""
+Check-in and check-out API endpoints.
+Exclusively powered by AWS DynamoDB.
+"""
 import base64
 from io import BytesIO
 
 import qrcode
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
 
 from db.session import get_db
+from repositories.dynamo_repository import DynamoRepository
 from services.rental_service import RentalService, RentalServiceError
 from schemas.checkinout import CheckOutRequest, CheckInRequest, CheckEventOut, QRPayloadOut
 
@@ -13,7 +17,7 @@ router = APIRouter(prefix="/checkinout", tags=["check-in/check-out"])
 
 
 @router.post("/checkout", response_model=CheckEventOut, status_code=201)
-def check_out(payload: CheckOutRequest, db: Session = Depends(get_db)):
+def check_out(payload: CheckOutRequest, db: DynamoRepository = Depends(get_db)):
     service = RentalService(db)
     try:
         return service.check_out(
@@ -29,7 +33,7 @@ def check_out(payload: CheckOutRequest, db: Session = Depends(get_db)):
 
 
 @router.post("/checkin", response_model=CheckEventOut)
-def check_in(payload: CheckInRequest, db: Session = Depends(get_db)):
+def check_in(payload: CheckInRequest, db: DynamoRepository = Depends(get_db)):
     service = RentalService(db)
     try:
         return service.check_in(

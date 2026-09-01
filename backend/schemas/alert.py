@@ -13,6 +13,6 @@ class AlertOut(BaseModel):
     type: AlertType
     severity: AlertSeverity
     message: str
-    confidence: float | None
-    resolved: bool
-    created_at: datetime
+    confidence: float | None = None
+    resolved: bool = False
+    created_at: datetime | str | None = None

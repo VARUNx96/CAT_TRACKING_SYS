@@ -103,7 +103,8 @@ class RecommendationEngine:
         for ev in active_events:
             if not ev.expected_return_date:
                 continue
-            days_left = (ev.expected_return_date - today).days
+            exp_date = date.fromisoformat(ev.expected_return_date) if isinstance(ev.expected_return_date, str) else ev.expected_return_date
+            days_left = (exp_date - today).days
             if 0 <= days_left <= days_before_expected:
                 logs = usage_by_id.get(ev.equipment_id, [])
                 if not logs:

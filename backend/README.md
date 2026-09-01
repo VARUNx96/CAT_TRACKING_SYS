@@ -3,7 +3,7 @@
 FastAPI backend implementing the full backend architecture: API layer,
 service layer, AI module (forecasting / anomaly detection / smart
 recommendations), data access layer, and an in-process scheduler for
-background alert scans — all backed by a single SQLite/PostgreSQL database.
+background alert scans — exclusively backed by AWS DynamoDB (SmartRentalTracking).
 
 ## Setup
 
@@ -11,18 +11,17 @@ background alert scans — all backed by a single SQLite/PostgreSQL database.
 cd backend
 python -m venv venv && source venv/bin/activate      # optional but recommended
 pip install -r requirements.txt
-cp .env.example .env                                   # defaults to local SQLite
+cp .env.example .env                                   # configure AWS credentials
 ```
 
-## Seed demo data
+## Seed DynamoDB table
 
-Loads the equipment/usage rows from the original problem sheet, plus a set
+Loads the equipment/usage rows from the Terraform problem sheet, plus a set
 of present-day scenarios (overdue rental, expiring-soon rental, an anomaly,
-and 21 days of trend data) so the dashboard, alerts, and forecast endpoints
-have something meaningful to show immediately:
+and Caterpillar fleet records) directly into AWS DynamoDB:
 
 ```bash
-python seed_data.py
+python seed_dynamodb.py
 ```
 
 ## Run
@@ -67,5 +66,5 @@ This closes the full loop: **telemetry → AI insight → alert/recommendation �
 
 - **Layered, not microservices** — deliberate choice for a hackathon: one deployable service, clean separation of concerns (routers → services → repositories → DB), easy to defend and easy to demo.
 - **AI is explainable by design** — exponential smoothing / moving average for forecasting, rule thresholds + Isolation Forest for anomalies, weighted scoring for recommendations. Every output can be explained in one sentence under judge questioning.
-- **SQLite by default, Postgres-ready** — swap `DATABASE_URL` in `.env`, no code changes needed.
+- **AWS DynamoDB Single-Table Architecture** — zero-latency key/range queries + 2 GSIs (SiteID-CheckInDate-index, Type-CheckOutDate-index) matching the Terraform cloud infrastructure.
 - **Scheduler runs in-process** (APScheduler) — no external cron/queue infrastructure required for the MVP.

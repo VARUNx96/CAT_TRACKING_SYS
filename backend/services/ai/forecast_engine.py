@@ -17,6 +17,7 @@ Output: N-period-ahead forecast with confidence interval + a plain-English
          relocation/allocation recommendation.
 """
 from datetime import date, timedelta
+from typing import Any
 
 import numpy as np
 
@@ -28,13 +29,20 @@ class ForecastEngine:
     def __init__(self, horizon_periods: int = 7):
         self.horizon_periods = horizon_periods
 
-    def _build_daily_series(self, logs: list[UsageLog]) -> list[float]:
+    def _build_daily_series(self, logs: list[Any]) -> list[float]:
         """Aggregate raw usage logs into one 'demand' value per day: count of
         assets with engine_hours_day > 0, i.e. actually rented/in-use that day."""
         by_day: dict[date, int] = {}
         for log in logs:
-            if log.engine_hours_day > 0:
-                by_day[log.log_date] = by_day.get(log.log_date, 0) + 1
+            eng_h = log.engine_hours_day if hasattr(log, "engine_hours_day") else (log.get("engine_hours_day") or 0.0)
+            log_d = log.log_date if hasattr(log, "log_date") else log.get("log_date")
+            if eng_h > 0 and log_d:
+                if isinstance(log_d, str):
+                    try:
+                        log_d = date.fromisoformat(log_d)
+                    except Exception:
+                        continue
+                by_day[log_d] = by_day.get(log_d, 0) + 1
         if not by_day:
             return []
         days = sorted(by_day.keys())

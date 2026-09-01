@@ -304,6 +304,7 @@ class DynamoRepository:
                     "message": f"Asset {eq_id} was expected back on {expected} but has not been returned.",
                     "created_at": item.get("CheckOutDate"),
                     "resolved": False,
+                    "confidence": None,
                 })
                 alert_counter += 1
 
@@ -317,6 +318,7 @@ class DynamoRepository:
                     "message": f"Rental for {eq_id} expires in {(date.fromisoformat(expected) - today).days} days ({expected}).",
                     "created_at": item.get("CheckOutDate"),
                     "resolved": False,
+                    "confidence": None,
                 })
                 alert_counter += 1
 
@@ -335,6 +337,7 @@ class DynamoRepository:
                         "message": f"Abnormal idle ratio ({idle_ratio:.0%}) detected on {item.get('CheckOutDate')}.",
                         "created_at": item.get("CheckOutDate"),
                         "resolved": False,
+                        "confidence": 0.95,
                     })
                     alert_counter += 1
 
