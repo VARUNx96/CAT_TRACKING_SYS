@@ -63,7 +63,12 @@ def ensure_table_exists(dynamo_resource=None) -> Any:
         logger.info(f"DynamoDB table '{table_name}' is active.")
         return table
     except ClientError as e:
-        if e.response.get("Error", {}).get("Code") != "ResourceNotFoundException":
+        code = e.response.get("Error", {}).get("Code")
+        # If IAM user has data-plane only permissions (per Terraform policy), return table directly
+        if code in ("AccessDeniedException", "AccessDenied"):
+            logger.info(f"Connected to DynamoDB table '{table_name}' with data-plane permissions.")
+            return table
+        if code != "ResourceNotFoundException":
             logger.warning(f"Error checking DynamoDB table '{table_name}': {e}")
             raise
 
