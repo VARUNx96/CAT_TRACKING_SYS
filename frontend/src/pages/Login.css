@@ -1,0 +1,208 @@
+.login-page {
+    --background: #f5f6f7;
+  }
+  
+  /* MAIN BACKGROUND */
+  
+  .login-container {
+    min-height: 100%;
+    width: 100%;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    padding: 40px 20px;
+    box-sizing: border-box;
+  
+    background: #ffcd00;
+  }
+  
+  /* LOGIN CARD */
+  
+  .login-card {
+    width: 100%;
+    max-width: 430px;
+  
+    background: #ffffff;
+  
+    padding: 40px;
+  
+    border-radius: 20px;
+  
+    box-sizing: border-box;
+  
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+  }
+  
+  /* CATERPILLAR LOGO */
+  
+  .login-logo {
+    width: 260px;
+    height: auto;
+  
+    margin: 0 auto 25px;
+  }
+  
+  .login-logo img {
+    display: block;
+  
+    width: 100%;
+    height: auto;
+  
+    max-width: 100%;
+  
+    object-fit: contain;
+  }
+  
+  /* HEADING */
+  
+  .login-card h1 {
+    margin: 0;
+  
+    text-align: center;
+  
+    font-family: Arial, sans-serif;
+  
+    font-size: 30px;
+    font-weight: 700;
+  
+    color: #171717;
+  }
+  
+  .login-subtitle {
+    margin: 10px 0 32px;
+  
+    text-align: center;
+  
+    font-family: Arial, sans-serif;
+  
+    font-size: 15px;
+  
+    color: #6b6b6b;
+  }
+  
+  /* FORM */
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+  
+    margin-bottom: 8px;
+  
+    font-family: Arial, sans-serif;
+  
+    font-size: 14px;
+    font-weight: 600;
+  
+    color: #333333;
+  }
+  
+  .form-group input {
+    width: 100%;
+    height: 48px;
+  
+    padding: 0 14px;
+  
+    box-sizing: border-box;
+  
+    border: 1px solid #d6d6d6;
+  
+    border-radius: 8px;
+  
+    background: #ffffff;
+  
+    font-family: Arial, sans-serif;
+  
+    font-size: 15px;
+  
+    outline: none;
+  
+    transition: 0.2s;
+  }
+  
+  .form-group input:focus {
+    border-color: #ffcd00;
+  
+    box-shadow: 0 0 0 3px rgba(255, 205, 0, 0.2);
+  }
+  
+  .form-group input::placeholder {
+    color: #999999;
+  }
+  
+  /* FORGOT PASSWORD */
+  
+  .forgot-password {
+    text-align: right;
+  
+    margin-top: -8px;
+    margin-bottom: 24px;
+  }
+  
+  .forgot-password a {
+    color: #555555;
+  
+    font-family: Arial, sans-serif;
+  
+    font-size: 13px;
+  
+    text-decoration: none;
+  }
+  
+  /* LOGIN BUTTON */
+  
+  .login-button {
+    width: 100%;
+    height: 48px;
+  
+    border: none;
+  
+    border-radius: 8px;
+  
+    background: #ffcd00;
+  
+    color: #171717;
+  
+    font-family: Arial, sans-serif;
+  
+    font-size: 16px;
+    font-weight: 700;
+  
+    cursor: pointer;
+  
+    transition: 0.2s;
+  }
+  
+  .login-button:hover {
+    background: #e6b800;
+  }
+  
+  .login-button:active {
+    transform: scale(0.98);
+  }
+  
+  /* SIGN UP */
+  
+  .signup-text {
+    margin: 26px 0 0;
+  
+    text-align: center;
+  
+    font-family: Arial, sans-serif;
+  
+    font-size: 14px;
+  
+    color: #666666;
+  }
+  
+  .signup-text a {
+    color: #171717;
+  
+    font-weight: 700;
+  
+    text-decoration: none;
+  }
