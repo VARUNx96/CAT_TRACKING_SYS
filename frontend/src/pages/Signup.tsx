@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { IonContent, IonPage } from '@ionic/react';
-import { saveUserProfile } from '../utils/userProfile';
+import { signUp } from 'aws-amplify/auth';
 
 import './Signup.css';
 
@@ -9,18 +9,53 @@ const Signup: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    const finalName = fullName.trim() || 'Varun P.';
-    const finalEmail = email.trim() || 'varun.admin@cat-telematics.internal';
 
-    saveUserProfile({
-      name: finalName,
-      email: finalEmail,
-      role: 'Fleet Operations Director',
-    });
+    const finalName = fullName.trim();
+    const finalEmail = email.trim();
 
-    window.location.href = '/home';
+    if (!finalName || !finalEmail || !password) {
+      alert('Please complete all fields.');
+      return;
+    }
+
+    try {
+      const { nextStep } = await signUp({
+        username: finalEmail,
+        password,
+        options: {
+          userAttributes: {
+            email: finalEmail,
+            name: finalName,
+          },
+        },
+      });
+
+      if (nextStep.signUpStep === 'CONFIRM_SIGN_UP') {
+        alert(
+          'Account created. Please check your email for the verification code.'
+        );
+
+        window.location.href = `/confirm-signup?email=${encodeURIComponent(
+          finalEmail
+        )}`;
+
+        return;
+      }
+
+      if (nextStep.signUpStep === 'DONE') {
+        alert('Account created successfully. Please sign in.');
+        window.location.href = '/login';
+      }
+    } catch (error: any) {
+      console.error('Signup error:', error);
+
+      alert(
+        error?.message ||
+          'Unable to create your account. Please try again.'
+      );
+    }
   };
 
   return (
@@ -45,9 +80,11 @@ const Signup: React.FC = () => {
             </p>
 
             <form onSubmit={handleSignup}>
+
               {/* Full Name */}
               <div className="form-group">
                 <label>Full Name</label>
+
                 <input
                   type="text"
                   value={fullName}
@@ -60,6 +97,7 @@ const Signup: React.FC = () => {
               {/* Email */}
               <div className="form-group">
                 <label>Registered Work Email</label>
+
                 <input
                   type="email"
                   value={email}
@@ -72,6 +110,7 @@ const Signup: React.FC = () => {
               {/* Password */}
               <div className="form-group">
                 <label>Password</label>
+
                 <input
                   type="password"
                   value={password}
@@ -85,6 +124,7 @@ const Signup: React.FC = () => {
               <button type="submit" className="signup-button">
                 Register Fleet Account
               </button>
+
             </form>
 
             {/* Login */}

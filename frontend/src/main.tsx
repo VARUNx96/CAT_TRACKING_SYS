@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
+import "./config/amplify";
 
 import '@ionic/react/css/core.css';
 import '@ionic/react/css/normalize.css';

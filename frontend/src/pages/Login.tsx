@@ -1,27 +1,51 @@
 import React, { useState } from 'react';
 import { IonContent, IonPage } from '@ionic/react';
+import { signIn } from 'aws-amplify/auth';
 import { saveUserProfile } from '../utils/userProfile';
-
 import './Login.css';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const finalEmail = email.trim() || 'varun.admin@cat-telematics.internal';
-    const computedName = email.trim()
-      ? email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
-      : 'Varun P.';
 
-    saveUserProfile({
-      name: computedName,
-      email: finalEmail,
-      role: 'Chief Fleet Operations Director',
-    });
+    const finalEmail = email.trim();
 
-    window.location.href = '/home';
+    if (!finalEmail || !password) {
+      alert('Please enter your email and password.');
+      return;
+    }
+
+    try {
+      const { isSignedIn } = await signIn({
+        username: finalEmail,
+        password,
+      });
+
+      if (isSignedIn) {
+        const computedName = finalEmail
+          .split('@')[0]
+          .replace(/[._]/g, ' ')
+          .replace(/\b\w/g, (c) => c.toUpperCase());
+
+        saveUserProfile({
+          name: computedName,
+          email: finalEmail,
+          role: 'Chief Fleet Operations Director',
+        });
+
+        window.location.href = '/home';
+      }
+    } catch (error: any) {
+      console.error('Login error:', error);
+
+      alert(
+        error?.message ||
+          'Unable to sign in. Please check your credentials.'
+      );
+    }
   };
 
   return (
@@ -46,25 +70,30 @@ const Login: React.FC = () => {
             </p>
 
             <form onSubmit={handleLogin}>
+
               {/* Email */}
               <div className="form-group">
                 <label>Registered Email Address</label>
+
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@caterpillar-fleet.com"
+                  required
                 />
               </div>
 
               {/* Password */}
               <div className="form-group">
                 <label>Password</label>
+
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
+                  required
                 />
               </div>
 
@@ -74,9 +103,13 @@ const Login: React.FC = () => {
               </div>
 
               {/* Login Button */}
-              <button type="submit" className="login-button">
+              <button
+                type="submit"
+                className="login-button"
+              >
                 Sign In to Fleet Command
               </button>
+
             </form>
 
             {/* Signup */}
