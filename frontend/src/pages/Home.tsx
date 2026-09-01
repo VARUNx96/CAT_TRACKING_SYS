@@ -28,52 +28,102 @@ import { ProfileModal } from '../components/ProfileModal';
 
 import './Home.css';
 
+const DASHBOARD_CACHE_KEY = 'cat_dashboard_cache';
+
+function getCachedData<T>(key: string, fallback: T): T {
+  try {
+    const raw = sessionStorage.getItem(DASHBOARD_CACHE_KEY);
+    if (!raw) return fallback;
+    const parsed = JSON.parse(raw);
+    return parsed[key] !== undefined ? parsed[key] : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function updateDashboardCache(key: string, value: any) {
+  try {
+    const raw = sessionStorage.getItem(DASHBOARD_CACHE_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    parsed[key] = value;
+    sessionStorage.setItem(DASHBOARD_CACHE_KEY, JSON.stringify(parsed));
+  } catch {
+    // ignore
+  }
+}
+
 const Home: React.FC = () => {
   const [theme, setTheme] = useState<Theme>(getInitialTheme());
   const [profile, setProfile] = useState<UserProfile>(getUserProfile());
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-  const [summary, setSummary] = useState<DashboardSummary>({
-    total_equipment: 0,
-    rented: 0,
-    available: 0,
-    maintenance: 0,
-    flagged: 0,
-    active_alerts: 0,
-    expiring_soon: 0,
-    overdue: 0,
-  });
-  const [equipment, setEquipment] = useState<EquipmentDashboardRow[]>([]);
-  const [alerts, setAlerts] = useState<Alert[]>([]);
-  const [forecast, setForecast] = useState<ForecastResponse | null>(null);
-  const [anomalies, setAnomalies] = useState<AnomalyResult[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Instantly hydrated from cache for 0ms initial render
+  const [summary, setSummary] = useState<DashboardSummary>(() =>
+    getCachedData<DashboardSummary>('summary', {
+      total_equipment: 0,
+      rented: 0,
+      available: 0,
+      maintenance: 0,
+      flagged: 0,
+      active_alerts: 0,
+      expiring_soon: 0,
+      overdue: 0,
+    })
+  );
+  const [equipment, setEquipment] = useState<EquipmentDashboardRow[]>(() =>
+    getCachedData<EquipmentDashboardRow[]>('equipment', [])
+  );
+  const [alerts, setAlerts] = useState<Alert[]>(() =>
+    getCachedData<Alert[]>('alerts', [])
+  );
+  const [forecast, setForecast] = useState<ForecastResponse | null>(() =>
+    getCachedData<ForecastResponse | null>('forecast', null)
+  );
+  const [anomalies, setAnomalies] = useState<AnomalyResult[]>(() =>
+    getCachedData<AnomalyResult[]>('anomalies', [])
+  );
+  const [loading, setLoading] = useState<boolean>(equipment.length === 0);
 
   useEffect(() => {
-    async function loadDashboardData() {
-      try {
-        setLoading(true);
-        const [sumRes, fleetRes, alertRes, forecastRes, anomalyRes] = await Promise.allSettled([
-          api.dashboard.getSummary(),
-          api.assets.getFleet(),
-          api.alerts.getActive(),
-          api.ai.getDemandForecast('Excavator'),
-          api.ai.getRecentAnomalies(),
-        ]);
+    // Progressive fast streaming: update each piece of UI as soon as it arrives
+    api.dashboard.getSummary()
+      .then((res) => {
+        setSummary(res);
+        updateDashboardCache('summary', res);
+      })
+      .catch((err) => console.error('Summary load error:', err));
 
-        if (sumRes.status === 'fulfilled') setSummary(sumRes.value);
-        if (fleetRes.status === 'fulfilled') setEquipment(fleetRes.value);
-        if (alertRes.status === 'fulfilled') setAlerts(alertRes.value);
-        if (forecastRes.status === 'fulfilled') setForecast(forecastRes.value);
-        if (anomalyRes.status === 'fulfilled') setAnomalies(anomalyRes.value);
-      } catch (err) {
-        console.error('Failed to load dashboard data:', err);
-      } finally {
+    api.assets.getFleet()
+      .then((res) => {
+        setEquipment(res);
+        updateDashboardCache('equipment', res);
         setLoading(false);
-      }
-    }
+      })
+      .catch((err) => {
+        console.error('Fleet load error:', err);
+        setLoading(false);
+      });
 
-    loadDashboardData();
+    api.alerts.getActive()
+      .then((res) => {
+        setAlerts(res);
+        updateDashboardCache('alerts', res);
+      })
+      .catch((err) => console.error('Alerts load error:', err));
+
+    api.ai.getDemandForecast('Excavator')
+      .then((res) => {
+        setForecast(res);
+        updateDashboardCache('forecast', res);
+      })
+      .catch((err) => console.error('Forecast load error:', err));
+
+    api.ai.getRecentAnomalies()
+      .then((res) => {
+        setAnomalies(res);
+        updateDashboardCache('anomalies', res);
+      })
+      .catch((err) => console.error('Anomalies load error:', err));
 
     function handleThemeChange(e: any) {
       if (e.detail?.theme) setTheme(e.detail.theme);

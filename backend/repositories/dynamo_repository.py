@@ -8,6 +8,7 @@ DynamoDB schema and GSIs configured in Terraform:
   - GSI 2: Type-CheckOutDate-index (Type-wise querying for Forecasting)
 """
 import logging
+import time
 from datetime import date, timedelta
 from decimal import Decimal
 from typing import Any
@@ -19,6 +20,27 @@ from db.dynamo import get_dynamo_resource, to_dynamo_decimal, from_dynamo_decima
 from models.equipment import EquipmentStatus
 
 logger = logging.getLogger("dynamo_repo")
+
+# In-memory TTL cache for read operations to avoid multi-second AWS DynamoDB latency
+_CACHE: dict[str, tuple[float, Any]] = {}
+_CACHE_TTL = 15.0  # 15 seconds TTL
+
+
+def _cache_get(key: str) -> Any | None:
+    if key in _CACHE:
+        ts, val = _CACHE[key]
+        if time.time() - ts < _CACHE_TTL:
+            return val
+        del _CACHE[key]
+    return None
+
+
+def _cache_set(key: str, val: Any) -> None:
+    _CACHE[key] = (time.time(), val)
+
+
+def _cache_invalidate() -> None:
+    _CACHE.clear()
 
 
 class DynamoRepository:
@@ -50,6 +72,11 @@ class DynamoRepository:
           - GSI 2 (Type-CheckOutDate-index) if type_ is filtered
           - Or base table scan grouped by unique EquipmentID
         """
+        cache_key = f"all_eq:{site_id}:{type_}"
+        cached = _cache_get(cache_key)
+        if cached is not None:
+            return cached
+
         if type_:
             # GSI 2: Query by Type
             resp = self.table.query(
@@ -75,7 +102,9 @@ class DynamoRepository:
             if eq_id:
                 latest_by_id[eq_id] = item
 
-        return [self._format_equipment(item) for item in latest_by_id.values()]
+        result = [self._format_equipment(item) for item in latest_by_id.values()]
+        _cache_set(cache_key, result)
+        return result
 
     def create_or_update_equipment(
         self,
@@ -89,6 +118,7 @@ class DynamoRepository:
         status: str = "Available",
     ) -> dict[str, Any]:
         """Creates or updates an equipment registration record."""
+        _cache_invalidate()
         existing = self.get_equipment(equipment_id)
         checkout_date = existing.get("check_out_date") if existing else str(date.today())
 
@@ -110,6 +140,7 @@ class DynamoRepository:
         return self._format_equipment(item)
 
     def update_status(self, equipment_id: str, status: str) -> dict[str, Any] | None:
+        _cache_invalidate()
         eq = self.get_equipment(equipment_id)
         if not eq:
             return None
@@ -138,6 +169,7 @@ class DynamoRepository:
         type_: str | None = None,
     ) -> dict[str, Any]:
         """Records a new check-out event item in DynamoDB."""
+        _cache_invalidate()
         current = self.get_equipment(equipment_id)
         eq_type = type_ or (current["type"] if current else "Excavator")
 
@@ -181,6 +213,7 @@ class DynamoRepository:
 
     def close_checkout(self, equipment_id: str, check_out_date: str, check_in_date: date) -> dict[str, Any]:
         """Closes a check-out by stamping CheckInDate and transitioning status to Available."""
+        _cache_invalidate()
         self.table.update_item(
             Key={"EquipmentID": equipment_id, "CheckOutDate": check_out_date},
             UpdateExpression="SET CheckInDate = :cid, #s = :status, ClientName = :empty",
@@ -223,6 +256,7 @@ class DynamoRepository:
         Records daily machine telemetry. Either updates the current rental item
         or logs an item for that date.
         """
+        _cache_invalidate()
         str_date = str(log_date)
         eq = self.get_equipment(equipment_id)
         eq_type = eq["type"] if eq else "Excavator"
@@ -254,20 +288,34 @@ class DynamoRepository:
         Uses GSI 2 (Type-CheckOutDate-index) directly to query historical
         telemetry for an entire equipment category without scanning the table.
         """
+        cache_key = f"hist_type:{equipment_type}:{days}"
+        cached = _cache_get(cache_key)
+        if cached is not None:
+            return cached
+
         since = str(date.today() - timedelta(days=days))
         resp = self.table.query(
             IndexName="Type-CheckOutDate-index",
             KeyConditionExpression=Key("Type").eq(equipment_type) & Key("CheckOutDate").gte(since),
             ScanIndexForward=True,
         )
-        return [self._format_usage_log(item) for item in resp.get("Items", [])]
+        result = [self._format_usage_log(item) for item in resp.get("Items", [])]
+        _cache_set(cache_key, result)
+        return result
 
     def all_recent_usage(self, days: int = 30) -> list[dict[str, Any]]:
+        cache_key = f"recent_usage:{days}"
+        cached = _cache_get(cache_key)
+        if cached is not None:
+            return cached
+
         since = str(date.today() - timedelta(days=days))
         resp = self.table.scan(
             FilterExpression=Attr("CheckOutDate").gte(since),
         )
-        return [self._format_usage_log(item) for item in resp.get("Items", [])]
+        result = [self._format_usage_log(item) for item in resp.get("Items", [])]
+        _cache_set(cache_key, result)
+        return result
 
     # -------------------------------------------------------------------------
     # ALERTS & INCIDENT AUDIT
@@ -280,6 +328,11 @@ class DynamoRepository:
           2. Expiring Soon: ExpectedReturnDate within 3 days AND CheckInDate is None
           3. Anomalies: IdleRatio >= 0.6
         """
+        cache_key = "active_alerts"
+        cached = _cache_get(cache_key)
+        if cached is not None:
+            return cached
+
         today = date.today()
         today_str = str(today)
         expiry_threshold = str(today + timedelta(days=settings.expiry_warning_days))
@@ -322,25 +375,24 @@ class DynamoRepository:
                 })
                 alert_counter += 1
 
-            # Check anomaly
-            engine_h = float(item.get("EngineHoursPerDay") or 0.0)
+            # Check idle anomaly
+            eng_h = float(item.get("EngineHoursPerDay") or 0.0)
             idle_h = float(item.get("IdleHoursPerDay") or 0.0)
-            tot_h = engine_h + idle_h
-            if tot_h > 0:
-                idle_ratio = idle_h / tot_h
-                if idle_ratio >= settings.idle_ratio_anomaly_threshold:
-                    alerts.append({
-                        "id": alert_counter,
-                        "equipment_id": eq_id,
-                        "type": "ANOMALY_IDLE",
-                        "severity": "HIGH" if idle_ratio > 0.8 else "MEDIUM",
-                        "message": f"Abnormal idle ratio ({idle_ratio:.0%}) detected on {item.get('CheckOutDate')}.",
-                        "created_at": item.get("CheckOutDate"),
-                        "resolved": False,
-                        "confidence": 0.95,
-                    })
-                    alert_counter += 1
+            tot_h = eng_h + idle_h
+            if tot_h > 0 and (idle_h / tot_h) >= settings.idle_ratio_anomaly_threshold:
+                alerts.append({
+                    "id": alert_counter,
+                    "equipment_id": eq_id,
+                    "type": "ANOMALY_IDLE",
+                    "severity": "MEDIUM",
+                    "message": f"High idle ratio detected: {(idle_h / tot_h):.0%} on {item.get('CheckOutDate')}.",
+                    "created_at": item.get("CheckOutDate"),
+                    "resolved": False,
+                    "confidence": 0.85,
+                })
+                alert_counter += 1
 
+        _cache_set(cache_key, alerts)
         return alerts
 
     # -------------------------------------------------------------------------
