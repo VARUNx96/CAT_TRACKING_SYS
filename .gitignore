@@ -40,3 +40,11 @@ cypress/videos/
 cypress/screenshots/
 *.log
 npm-debug.log*
+
+# AWS credentials
+acces-cred.txt
+
+# Terraform state
+.terraform/
+*.tfstate
+*.tfstate.*
