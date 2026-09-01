@@ -1,5 +1,5 @@
 /* =========================================================
-   TOP NAVBAR STYLES — HIGH VISIBILITY DASHBOARD RETURN & THEME
+   CATERPILLAR INDUSTRIAL COMMAND-CENTER TOP NAVBAR
    ========================================================= */
 
 .cat-top-navbar {
@@ -7,92 +7,79 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 12px 20px;
-  margin-bottom: 24px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-  transition: background 0.2s ease, border-color 0.2s ease;
+  padding: 12px 24px;
+  background: #111418;
+  border-bottom: 2px solid #FFCD11;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
   position: sticky;
-  top: 10px;
-  z-index: 100;
-  backdrop-filter: blur(12px);
+  top: 0;
+  z-index: 999;
+  box-sizing: border-box;
 }
 
-.dark-mode .cat-top-navbar {
-  background: #18181b;
-  border-color: #27272a;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-}
-
-/* Left section with Dashboard button and Brand */
+/* LEFT: DASHBOARD RETURN + BREADCRUMB */
 .cat-nav-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
-/* HIGH-VISIBILITY CATERPILLAR YELLOW DASHBOARD BUTTON */
 .cat-return-dashboard-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #FFCD11 !important;
-  color: #000000 !important;
-  border: none !important;
-  padding: 10px 18px !important;
-  border-radius: 10px !important;
-  font-size: 0.95rem !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.3px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(255, 205, 17, 0.35);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 9px 18px;
+  background: #FFCD11;
+  color: #0b0d10 !important;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   text-decoration: none;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(255, 205, 17, 0.4);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid #e6b800;
 }
 
 .cat-return-dashboard-btn ion-icon {
-  font-size: 1.25rem;
-  stroke-width: 32px;
-  color: #000000 !important;
+  font-size: 17px;
+  stroke-width: 2.5px;
 }
 
 .cat-return-dashboard-btn:hover {
-  background: #f5c400 !important;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(255, 205, 17, 0.5);
+  background: #FFE066;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(255, 205, 17, 0.6);
 }
 
-.cat-return-dashboard-btn:active {
-  transform: translateY(0);
-}
-
-/* Page badge / breadcrumb */
 .cat-nav-breadcrumb {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-secondary);
+  color: #9ca3af;
+  font-size: 14px;
 }
 
 .cat-nav-breadcrumb .divider {
-  color: var(--text-muted);
-}
-
-.cat-nav-breadcrumb .current-title {
-  color: var(--text-primary);
+  color: #4b5563;
   font-weight: 700;
 }
 
-/* Quick Navigation Links */
+.cat-nav-breadcrumb .current-title {
+  color: #f3f4f6;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+/* CENTER: QUICK SWITCHER PILLS */
 .cat-nav-links {
   display: flex;
   align-items: center;
   gap: 8px;
-  overflow-x: auto;
+  flex-wrap: wrap;
 }
 
 .cat-nav-pill {
@@ -100,68 +87,148 @@
   align-items: center;
   gap: 6px;
   padding: 7px 14px;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 600;
+  border-radius: 4px;
+  background: #1a1e24;
+  color: #d1d5db !important;
   text-decoration: none;
-  color: var(--text-secondary);
-  background: transparent;
-  border: 1px solid transparent;
-  transition: all 0.15s ease;
-  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.2s;
+}
+
+.cat-nav-pill ion-icon {
+  font-size: 15px;
+  color: #9ca3af;
+  transition: color 0.2s;
 }
 
 .cat-nav-pill:hover {
-  background: var(--bg-surface-muted);
-  color: var(--text-primary);
+  background: #242b35;
+  color: #ffffff !important;
+  border-color: rgba(255, 205, 17, 0.4);
 }
 
-.dark-mode .cat-nav-pill:hover {
-  background: #27272a;
-  color: #fff;
+.cat-nav-pill:hover ion-icon {
+  color: #FFCD11;
 }
 
 .cat-nav-pill.active {
   background: rgba(255, 205, 17, 0.15);
-  color: #FFCD11;
-  border-color: rgba(255, 205, 17, 0.3);
+  color: #FFCD11 !important;
+  border-color: #FFCD11;
+  box-shadow: 0 0 10px rgba(255, 205, 17, 0.2);
 }
 
-/* Right section: theme toggle */
+.cat-nav-pill.active ion-icon {
+  color: #FFCD11;
+}
+
+/* RIGHT: PROFILE + THEME + LOGOUT */
 .cat-nav-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
+/* PROFILE BUTTON */
+.cat-nav-profile-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #181d24;
+  border: 1px solid rgba(255, 205, 17, 0.35);
+  border-radius: 4px;
+  color: #f3f4f6;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cat-nav-profile-btn:hover {
+  background: #222933;
+  border-color: #FFCD11;
+  box-shadow: 0 0 12px rgba(255, 205, 17, 0.25);
+}
+
+.cat-avatar-dot {
+  color: #FFCD11;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.cat-profile-name {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #ffffff;
+}
+
+/* THEME TOGGLE */
 .cat-theme-toggle-btn {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 8px 14px;
-  border-radius: 8px;
-  background: var(--bg-surface-muted);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  font-size: 0.85rem;
+  gap: 6px;
+  padding: 7px 12px;
+  background: #181d24;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  color: #e5e7eb;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.dark-mode .cat-theme-toggle-btn {
-  background: #27272a;
-  border-color: #3f3f46;
-  color: #f4f4f5;
+  transition: all 0.2s;
 }
 
 .cat-theme-toggle-btn:hover {
+  background: #242b35;
+  color: #ffffff;
   border-color: #FFCD11;
-  color: #FFCD11;
 }
 
+/* LOGOUT BUTTON */
+.cat-nav-logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: rgba(220, 38, 38, 0.15);
+  border: 1px solid rgba(220, 38, 38, 0.5);
+  border-radius: 4px;
+  color: #fca5a5;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cat-nav-logout-btn ion-icon {
+  font-size: 15px;
+}
+
+.cat-nav-logout-btn:hover {
+  background: #dc2626;
+  color: #ffffff;
+  border-color: #ef4444;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+}
+
+/* RESPONSIVE */
 @media (max-width: 900px) {
+  .cat-top-navbar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 16px;
+  }
   .cat-nav-links {
-    display: none;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .cat-nav-right {
+    justify-content: flex-end;
   }
 }

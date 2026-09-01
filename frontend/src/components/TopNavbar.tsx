@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { IonIcon } from '@ionic/react';
 import {
   arrowBackOutline,
-  homeOutline,
   sunnyOutline,
   moonOutline,
   constructOutline,
@@ -11,9 +10,13 @@ import {
   notificationsOutline,
   analyticsOutline,
   schoolOutline,
+  personCircleOutline,
+  logOutOutline,
 } from 'ionicons/icons';
 
 import { getInitialTheme, toggleTheme, Theme } from '../utils/theme';
+import { getUserProfile, UserProfile, performLogout } from '../utils/userProfile';
+import { ProfileModal } from './ProfileModal';
 import './TopNavbar.css';
 
 interface TopNavbarProps {
@@ -23,6 +26,8 @@ interface TopNavbarProps {
 
 export const TopNavbar: React.FC<TopNavbarProps> = ({ currentTitle, activePath }) => {
   const [theme, setThemeState] = useState<Theme>(getInitialTheme());
+  const [profile, setProfile] = useState<UserProfile>(getUserProfile());
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   useEffect(() => {
     function handleThemeChange(e: any) {
@@ -30,8 +35,18 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ currentTitle, activePath }
         setThemeState(e.detail.theme);
       }
     }
+    function handleProfileChange(e: any) {
+      if (e.detail) {
+        setProfile(e.detail);
+      }
+    }
+
     window.addEventListener('cat-theme-changed', handleThemeChange);
-    return () => window.removeEventListener('cat-theme-changed', handleThemeChange);
+    window.addEventListener('cat-user-profile-changed', handleProfileChange);
+    return () => {
+      window.removeEventListener('cat-theme-changed', handleThemeChange);
+      window.removeEventListener('cat-user-profile-changed', handleProfileChange);
+    };
   }, []);
 
   const handleToggle = () => {
@@ -40,60 +55,87 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ currentTitle, activePath }
   };
 
   return (
-    <div className="cat-top-navbar">
-      <div className="cat-nav-left">
-        {/* HIGH-VISIBILITY CATERPILLAR YELLOW DASHBOARD BUTTON */}
-        <a href="/home" className="cat-return-dashboard-btn" title="Back to Main Fleet Dashboard">
-          <IonIcon icon={arrowBackOutline} />
-          <span>Dashboard</span>
-        </a>
+    <>
+      <div className="cat-top-navbar">
+        <div className="cat-nav-left">
+          {/* HIGH-VISIBILITY CATERPILLAR YELLOW DASHBOARD BUTTON */}
+          <a href="/home" className="cat-return-dashboard-btn" title="Back to Main Fleet Dashboard">
+            <IonIcon icon={arrowBackOutline} />
+            <span>Dashboard</span>
+          </a>
 
-        <div className="cat-nav-breadcrumb">
-          <span className="divider">/</span>
-          <span className="current-title">{currentTitle}</span>
+          <div className="cat-nav-breadcrumb">
+            <span className="divider">/</span>
+            <span className="current-title">{currentTitle}</span>
+          </div>
+        </div>
+
+        {/* QUICK PAGE SWITCHER PILLS */}
+        <div className="cat-nav-links">
+          <a href="/assets" className={`cat-nav-pill ${activePath === '/assets' ? 'active' : ''}`}>
+            <IonIcon icon={constructOutline} />
+            <span>Assets</span>
+          </a>
+          <a href="/rentals" className={`cat-nav-pill ${activePath === '/rentals' ? 'active' : ''}`}>
+            <IonIcon icon={swapHorizontalOutline} />
+            <span>Rentals</span>
+          </a>
+          <a href="/usage" className={`cat-nav-pill ${activePath === '/usage' ? 'active' : ''}`}>
+            <IonIcon icon={speedometerOutline} />
+            <span>Usage</span>
+          </a>
+          <a href="/alerts" className={`cat-nav-pill ${activePath === '/alerts' ? 'active' : ''}`}>
+            <IonIcon icon={notificationsOutline} />
+            <span>Alerts</span>
+          </a>
+          <a href="/insights" className={`cat-nav-pill ${activePath === '/insights' ? 'active' : ''}`}>
+            <IonIcon icon={analyticsOutline} />
+            <span>AI Insights</span>
+          </a>
+          <a href="/operator-guides" className={`cat-nav-pill ${activePath === '/operator-guides' ? 'active' : ''}`}>
+            <IonIcon icon={schoolOutline} />
+            <span>Guides</span>
+          </a>
+        </div>
+
+        <div className="cat-nav-right">
+          {/* USER PROFILE BUTTON */}
+          <button
+            onClick={() => setIsProfileOpen(true)}
+            className="cat-nav-profile-btn"
+            title={`View Operator Profile (${profile.name})`}
+          >
+            <div className="cat-avatar-dot">
+              <IonIcon icon={personCircleOutline} />
+            </div>
+            <span className="cat-profile-name">{profile.name}</span>
+          </button>
+
+          {/* GLOBAL THEME SWITCHER */}
+          <button
+            onClick={handleToggle}
+            className="cat-theme-toggle-btn"
+            title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+          >
+            <IonIcon icon={theme === 'dark' ? sunnyOutline : moonOutline} style={{ color: '#FFCD11' }} />
+            <span>{theme === 'dark' ? 'Light' : 'Dark'}</span>
+          </button>
+
+          {/* QUICK LOGOUT BUTTON */}
+          <button
+            onClick={performLogout}
+            className="cat-nav-logout-btn"
+            title="Log Out of Cat Telematics"
+          >
+            <IonIcon icon={logOutOutline} />
+            <span>Logout</span>
+          </button>
         </div>
       </div>
 
-      {/* QUICK PAGE SWITCHER PILLS */}
-      <div className="cat-nav-links">
-        <a href="/assets" className={`cat-nav-pill ${activePath === '/assets' ? 'active' : ''}`}>
-          <IonIcon icon={constructOutline} />
-          <span>Assets</span>
-        </a>
-        <a href="/rentals" className={`cat-nav-pill ${activePath === '/rentals' ? 'active' : ''}`}>
-          <IonIcon icon={swapHorizontalOutline} />
-          <span>Rentals</span>
-        </a>
-        <a href="/usage" className={`cat-nav-pill ${activePath === '/usage' ? 'active' : ''}`}>
-          <IonIcon icon={speedometerOutline} />
-          <span>Usage</span>
-        </a>
-        <a href="/alerts" className={`cat-nav-pill ${activePath === '/alerts' ? 'active' : ''}`}>
-          <IonIcon icon={notificationsOutline} />
-          <span>Alerts</span>
-        </a>
-        <a href="/insights" className={`cat-nav-pill ${activePath === '/insights' ? 'active' : ''}`}>
-          <IonIcon icon={analyticsOutline} />
-          <span>AI Insights</span>
-        </a>
-        <a href="/operator-guides" className={`cat-nav-pill ${activePath === '/operator-guides' ? 'active' : ''}`}>
-          <IonIcon icon={schoolOutline} />
-          <span>Guides</span>
-        </a>
-      </div>
-
-      <div className="cat-nav-right">
-        {/* GLOBAL THEME SWITCHER */}
-        <button
-          onClick={handleToggle}
-          className="cat-theme-toggle-btn"
-          title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
-        >
-          <IonIcon icon={theme === 'dark' ? sunnyOutline : moonOutline} style={{ color: '#FFCD11' }} />
-          <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
-        </button>
-      </div>
-    </div>
+      {/* OPERATOR PROFILE MODAL */}
+      <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
+    </>
   );
 };
 

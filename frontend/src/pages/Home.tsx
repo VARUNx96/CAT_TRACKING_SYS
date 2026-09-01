@@ -10,6 +10,8 @@ import {
   swapHorizontalOutline,
   speedometerOutline,
   schoolOutline,
+  logOutOutline,
+  personCircleOutline,
 } from 'ionicons/icons';
 
 import {
@@ -21,11 +23,16 @@ import {
   AnomalyResult,
 } from '../services/api';
 import { getInitialTheme, toggleTheme, Theme } from '../utils/theme';
+import { getUserProfile, UserProfile, performLogout } from '../utils/userProfile';
+import { ProfileModal } from '../components/ProfileModal';
 
 import './Home.css';
 
 const Home: React.FC = () => {
   const [theme, setTheme] = useState<Theme>(getInitialTheme());
+  const [profile, setProfile] = useState<UserProfile>(getUserProfile());
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
   const [summary, setSummary] = useState<DashboardSummary>({
     total_equipment: 0,
     rented: 0,
@@ -71,33 +78,41 @@ const Home: React.FC = () => {
     function handleThemeChange(e: any) {
       if (e.detail?.theme) setTheme(e.detail.theme);
     }
+    function handleProfileChange(e: any) {
+      if (e.detail) setProfile(e.detail);
+    }
+
     window.addEventListener('cat-theme-changed', handleThemeChange);
-    return () => window.removeEventListener('cat-theme-changed', handleThemeChange);
+    window.addEventListener('cat-user-profile-changed', handleProfileChange);
+    return () => {
+      window.removeEventListener('cat-theme-changed', handleThemeChange);
+      window.removeEventListener('cat-user-profile-changed', handleProfileChange);
+    };
   }, []);
 
   const stats = [
     {
-      label: 'Total Equipment',
+      label: 'TOTAL ASSETS',
       value: summary.total_equipment.toString(),
-      detail: 'Fleet size',
+      detail: 'Registered Heavy Machinery',
       icon: '▦',
     },
     {
-      label: 'Rented',
+      label: 'RENTED // ACTIVE',
       value: summary.rented.toString(),
-      detail: 'Currently with clients',
+      detail: 'Dispatched to Client Sites',
       icon: '↗',
     },
     {
-      label: 'Available',
+      label: 'AVAILABLE // READY',
       value: summary.available.toString(),
-      detail: 'Ready for deployment',
+      detail: 'Depot Ready for Deployment',
       icon: '✓',
     },
     {
-      label: 'Maintenance',
+      label: 'MAINTENANCE // AUDIT',
       value: summary.maintenance.toString(),
-      detail: 'Under maintenance',
+      detail: 'Scheduled Service Interval',
       icon: '⚙',
     },
   ];
@@ -107,18 +122,22 @@ const Home: React.FC = () => {
       <IonContent fullscreen className="home-page">
         <div className="home-layout">
 
-          {/* SIDEBAR */}
+          {/* CATERPILLAR INDUSTRIAL SIDEBAR */}
           <aside className="sidebar">
 
-            <div className="home-logo">
-              <img
-                src="/images/full-light.jpg"
-                alt="Caterpillar"
-                onError={(e) => {
-                  (e.target as HTMLElement).style.display = 'none';
-                }}
-              />
-              <h2 style={{ color: '#FFCD11', margin: '8px 0 0 0', fontWeight: 800 }}>CAT TRACK</h2>
+            <div className="sidebar-brand-box">
+              <div className="brand-badge">CAT // TELEMATICS</div>
+              <div className="home-logo">
+                <img
+                  src="/images/full-light.jpg"
+                  alt="Caterpillar"
+                  onError={(e) => {
+                    (e.target as HTMLElement).style.display = 'none';
+                  }}
+                />
+                <h2 className="cat-brand-title">CAT TRACK</h2>
+                <span className="cat-brand-subtitle">FLEET INTELLIGENCE // AWS DYNAMODB</span>
+              </div>
             </div>
 
             <nav className="menu">
@@ -129,12 +148,12 @@ const Home: React.FC = () => {
 
               <a className="menu-item" href="/assets">
                 <IonIcon icon={constructOutline} />
-                <span>Assets</span>
+                <span>Assets Registry</span>
               </a>
 
               <a className="menu-item" href="/rentals">
                 <IonIcon icon={swapHorizontalOutline} />
-                <span>Rentals</span>
+                <span>Rentals & QR</span>
               </a>
 
               <a className="menu-item" href="/usage">
@@ -144,7 +163,10 @@ const Home: React.FC = () => {
 
               <a className="menu-item" href="/alerts">
                 <IonIcon icon={notificationsOutline} />
-                <span>Alerts</span>
+                <span>Alerts Center</span>
+                {summary.active_alerts > 0 && (
+                  <span className="sidebar-alert-badge">{summary.active_alerts}</span>
+                )}
               </a>
 
               <a className="menu-item" href="/insights">
@@ -154,11 +176,12 @@ const Home: React.FC = () => {
 
               <a className="menu-item" href="/operator-guides">
                 <IonIcon icon={schoolOutline} />
-                <span>Operator Guides</span>
+                <span>Operator SOPs</span>
               </a>
             </nav>
 
             <div className="sidebar-bottom">
+              {/* THEME BUTTON */}
               <button
                 className="theme-button"
                 onClick={() => {
@@ -168,10 +191,21 @@ const Home: React.FC = () => {
               >
                 <IonIcon
                   icon={theme === 'dark' ? sunnyOutline : moonOutline}
+                  style={{ color: '#FFCD11' }}
                 />
                 <span>
-                  {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                  {theme === 'dark' ? 'Light Theme' : 'Dark Theme'}
                 </span>
+              </button>
+
+              {/* DEDICATED LOGOUT BUTTON IN SIDEBAR */}
+              <button
+                className="sidebar-logout-button"
+                onClick={performLogout}
+                title="Sign out of Cat Telematics"
+              >
+                <IonIcon icon={logOutOutline} />
+                <span>Log Out</span>
               </button>
             </div>
 
@@ -183,15 +217,23 @@ const Home: React.FC = () => {
             {/* TOP BAR */}
             <header className="topbar">
               <div>
-                <h2>Dashboard</h2>
-                <p>Rental intelligence overview</p>
+                <span className="topbar-tag">FLEET COMMAND // OVERVIEW</span>
+                <h2 className="topbar-heading">Executive Telematics Dashboard</h2>
+                <p className="topbar-sub">Real-time asset telemetry, predictive intelligence, and rental traceability.</p>
               </div>
 
-              <div className="profile">
-                <div className="profile-avatar">V</div>
-                <div>
-                  <strong>Varun</strong>
-                  <small>Administrator</small>
+              {/* INTERACTIVE PROFILE BUTTON */}
+              <div
+                className="profile"
+                onClick={() => setIsProfileOpen(true)}
+                title="Click to view Operator profile and email"
+              >
+                <div className="profile-avatar">
+                  {profile.name.charAt(0).toUpperCase()}
+                </div>
+                <div className="profile-text">
+                  <strong className="profile-name">{profile.name}</strong>
+                  <span className="profile-email">{profile.email}</span>
                 </div>
               </div>
             </header>
@@ -199,46 +241,48 @@ const Home: React.FC = () => {
             {/* DASHBOARD BODY */}
             <section className="dashboard">
 
-              {/* WELCOME */}
+              {/* COMMAND HERO BANNER */}
               <div className="welcome">
                 <div>
-                  <h1>Good morning 👋</h1>
+                  <div className="welcome-tag">SYSTEM ONLINE // NODE CAT-US-EAST-1</div>
+                  <h1>Good morning, {profile.name.split(' ')[0]} 👋</h1>
                   <p>
-                    Here's what's happening across your rental fleet.
+                    Continuous machine tracking active. <strong>{summary.total_equipment}</strong> heavy assets monitored via AWS DynamoDB single-table data engine.
                   </p>
                 </div>
 
                 <div className="system-status">
-                  <span style={{ color: loading ? '#f59e0b' : '#10b981' }}>●</span>
-                  {loading ? ' Syncing telemetry...' : ' Intelligence layer active'}
+                  <span className="status-dot-pulse"></span>
+                  {loading ? ' Syncing telemetry records...' : ' Telematics telemetry active'}
                 </div>
               </div>
 
-              {/* STATS */}
+              {/* HIGH-IMPACT STATS GRID */}
               <div className="stats-grid">
                 {stats.map((stat) => (
                   <div className="stat-card" key={stat.label}>
                     <div className="stat-top">
-                      <span>{stat.label}</span>
-                      <b>{stat.icon}</b>
+                      <span className="stat-label">{stat.label}</span>
+                      <b className="stat-icon">{stat.icon}</b>
                     </div>
-                    <strong>{stat.value}</strong>
-                    <small>{stat.detail}</small>
+                    <strong className="stat-value">{stat.value}</strong>
+                    <small className="stat-detail">{stat.detail}</small>
                   </div>
                 ))}
               </div>
 
-              {/* AI + ATTENTION */}
+              {/* AI + ATTENTION PANELS */}
               <div className="content-grid">
 
                 {/* AI INSIGHTS */}
                 <div className="panel ai-panel">
                   <div className="panel-header">
                     <div>
-                      <h3>AI Insights & Recommendations</h3>
-                      <p>From asset data to operational decisions</p>
+                      <span className="panel-pre-title">PREDICTIVE ANALYTICS</span>
+                      <h3>AI Insights & Forecasting</h3>
+                      <p>Holt's Linear Smoothing & Isolation Forest anomaly heuristics</p>
                     </div>
-                    <span className="ai-badge">AI</span>
+                    <span className="ai-badge">AI LIVE</span>
                   </div>
 
                   <div className="insight">
@@ -247,11 +291,11 @@ const Home: React.FC = () => {
                       <strong>
                         {forecast ? `Demand Forecast: ${forecast.equipment_type}` : 'Excavator Demand Model Active'}
                       </strong>
-                      <span>
-                        {forecast?.recommendation || 'AI projection suggests rising machine-hour demand next week.'}
+                      <span className="insight-desc">
+                        {forecast?.recommendation || 'AI projection suggests rising machine-hour demand across active project sites next week.'}
                       </span>
-                      <button onClick={() => { window.location.href = '/insights'; }}>
-                        Review allocation →
+                      <button className="insight-action-btn" onClick={() => { window.location.href = '/insights'; }}>
+                        Review Fleet Allocation →
                       </button>
                     </div>
                   </div>
@@ -261,53 +305,54 @@ const Home: React.FC = () => {
                     <div className="insight-content">
                       <strong>
                         {anomalies.length > 0
-                          ? `Anomaly Flagged: ${anomalies[0].equipment_id}`
+                          ? `Telemetry Anomaly Flagged: ${anomalies[0].equipment_id}`
                           : 'Telemetry Anomaly Detector'}
                       </strong>
-                      <span>
+                      <span className="insight-desc">
                         {anomalies.length > 0
-                          ? `Reasons: ${anomalies[0].reason_codes.join(', ')} (Score: ${anomalies[0].anomaly_score.toFixed(2)})`
-                          : 'All operating hours and idle ratios are within nominal thresholds.'}
+                          ? `Reasons: ${anomalies[0].reason_codes.join(', ')} (Anomaly Score: ${anomalies[0].anomaly_score.toFixed(2)})`
+                          : 'All machine operating hours, fuel idle ratios, and dispatch cycles are operating within nominal thresholds.'}
                       </span>
-                      <button onClick={() => { window.location.href = '/alerts'; }}>
-                        Inspect alerts →
+                      <button className="insight-action-btn" onClick={() => { window.location.href = '/alerts'; }}>
+                        Inspect Active Alerts →
                       </button>
                     </div>
                   </div>
                 </div>
 
-                {/* ATTENTION */}
+                {/* ATTENTION REQUIRED */}
                 <div className="panel attention-panel">
                   <div className="panel-header">
                     <div>
+                      <span className="panel-pre-title">AUDIT ENGINE</span>
                       <h3>Attention Required</h3>
-                      <p>Items that may need action</p>
+                      <p>Compliance and return exceptions requiring operator sign-off</p>
                     </div>
-                    <a href="/alerts">View all</a>
+                    <a href="/alerts" className="panel-link">View Alerts Center →</a>
                   </div>
 
                   <div className="attention-list">
                     <div className="attention-item danger">
-                      <span>!</span>
+                      <span className="attention-icon">!</span>
                       <div>
-                        <strong>{summary.expiring_soon} rentals expiring</strong>
-                        <small>Within the next 48 hours</small>
+                        <strong>{summary.expiring_soon} rentals nearing contract expiry</strong>
+                        <small>Return confirmation or contract extension required within 48h</small>
                       </div>
                     </div>
 
                     <div className="attention-item warning">
-                      <span>!</span>
+                      <span className="attention-icon">⚠</span>
                       <div>
-                        <strong>{summary.overdue} overdue assets</strong>
-                        <small>Return confirmation required</small>
+                        <strong>{summary.overdue} overdue assets detected</strong>
+                        <small>Site dispatch audit flagged missing return timestamp</small>
                       </div>
                     </div>
 
                     <div className="attention-item neutral">
-                      <span>i</span>
+                      <span className="attention-icon">⚙</span>
                       <div>
-                        <strong>{summary.maintenance} assets in maintenance</strong>
-                        <small>Check service schedules</small>
+                        <strong>{summary.maintenance} machines in maintenance bay</strong>
+                        <small>Depot inspection and scheduled hydraulic lubrication</small>
                       </div>
                     </div>
                   </div>
@@ -315,17 +360,18 @@ const Home: React.FC = () => {
 
               </div>
 
-              {/* FLEET + ACTIVITY */}
+              {/* FLEET + ACTIVITY PANELS */}
               <div className="content-grid">
 
                 {/* FLEET STATUS */}
                 <div className="panel equipment-panel">
                   <div className="panel-header">
                     <div>
-                      <h3>Fleet Status</h3>
-                      <p>Track every asset from handoff to return</p>
+                      <span className="panel-pre-title">TRACEABILITY LEDGER</span>
+                      <h3>Fleet Overview</h3>
+                      <p>Every asset tracked from handoff to return</p>
                     </div>
-                    <a href="/assets">View all</a>
+                    <a href="/assets" className="panel-link">Open Full Registry →</a>
                   </div>
 
                   <div className="equipment-list">
@@ -335,11 +381,11 @@ const Home: React.FC = () => {
 
                         <div className="equipment-info">
                           <strong>{item.name}</strong>
-                          <span>{item.id} · {item.location}</span>
+                          <span>{item.id} · Location: {item.location}</span>
                         </div>
 
                         <div className="equipment-client">
-                          <small>Client</small>
+                          <small>Client Assignment</small>
                           <span>{item.client}</span>
                         </div>
 
@@ -348,13 +394,15 @@ const Home: React.FC = () => {
                         </div>
 
                         <div className="usage">
-                          <small>Utilization</small>
-                          <span>{item.utilization_pct_7d ? `${item.utilization_pct_7d}%` : '—'}</span>
+                          <small>7-Day Utilization</small>
+                          <span>{item.utilization_pct_7d !== null ? `${item.utilization_pct_7d}%` : '—'}</span>
                         </div>
                       </div>
                     ))}
                     {equipment.length === 0 && !loading && (
-                      <p style={{ color: '#94a3b8', padding: '16px 0' }}>No equipment records found.</p>
+                      <p style={{ color: '#94a3b8', padding: '24px 0', textAlign: 'center' }}>
+                        No equipment records found in database.
+                      </p>
                     )}
                   </div>
                 </div>
@@ -363,19 +411,20 @@ const Home: React.FC = () => {
                 <div className="panel activity-panel">
                   <div className="panel-header">
                     <div>
-                      <h3>Recent Alerts & Events</h3>
-                      <p>Latest asset telemetry events</p>
+                      <span className="panel-pre-title">INCIDENT LOGS</span>
+                      <h3>Telemetry Incidents</h3>
+                      <p>Active audit logs generated by background scan</p>
                     </div>
-                    <a href="/alerts">Alert Center</a>
+                    <a href="/alerts" className="panel-link">Alerts Center →</a>
                   </div>
 
                   <div className="activity-list">
                     {alerts.slice(0, 4).map((alert) => (
                       <div className="activity" key={alert.id}>
                         <span className={`activity-dot ${alert.severity.toLowerCase() === 'high' ? 'alert' : 'checkout'}`} />
-                        <div>
-                          <strong>{alert.equipment_id} · {alert.type}</strong>
-                          <small>{alert.message}</small>
+                        <div className="activity-content">
+                          <strong>{alert.equipment_id} // {alert.type}</strong>
+                          <p>{alert.message}</p>
                         </div>
                       </div>
                     ))}
@@ -383,9 +432,9 @@ const Home: React.FC = () => {
                     {alerts.length === 0 && (
                       <div className="activity">
                         <span className="activity-dot return" />
-                        <div>
-                          <strong>All systems normal</strong>
-                          <small>No active alert conditions</small>
+                        <div className="activity-content">
+                          <strong>All systems nominal</strong>
+                          <p>Zero active telemetry anomalies or contract overruns detected.</p>
                         </div>
                       </div>
                     )}
@@ -400,6 +449,9 @@ const Home: React.FC = () => {
 
         </div>
       </IonContent>
+
+      {/* OPERATOR PROFILE MODAL */}
+      <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
     </IonPage>
   );
 };
