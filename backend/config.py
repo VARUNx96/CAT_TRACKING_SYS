@@ -10,6 +10,16 @@ class Settings(BaseSettings):
 
     database_url: str = "sqlite:///./rental.db"
 
+    # Database engine: "dynamodb" or "sqlite"
+    db_engine: str = "sqlite"
+
+    # AWS DynamoDB Configuration
+    aws_region: str = "us-east-1"
+    dynamodb_table_name: str = "SmartRentalTracking"
+    aws_access_key_id: str | None = None
+    aws_secret_access_key: str | None = None
+    dynamodb_endpoint_url: str | None = None  # for DynamoDB Local or LocalStack
+
     # Business rule thresholds — surfaced here so they're easy to tune
     # without touching service logic.
     overdue_grace_days: int = 0
