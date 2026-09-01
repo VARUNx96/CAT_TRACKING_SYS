@@ -102,7 +102,7 @@ const Usage: React.FC = () => {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <label style={{ color: '#a1a1aa', fontSize: '0.9rem' }}>Select Asset:</label>
+              <label style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: 600 }}>Select Asset:</label>
               <select
                 value={selectedId}
                 onChange={(e) => {
@@ -110,13 +110,7 @@ const Usage: React.FC = () => {
                   setLogForm((prev) => ({ ...prev, equipment_id: e.target.value }));
                   loadMachineTelemetry(e.target.value);
                 }}
-                style={{
-                  padding: '8px 12px',
-                  background: '#27272a',
-                  color: '#fff',
-                  border: '1px solid #3f3f46',
-                  borderRadius: '8px',
-                }}
+                className="cat-select-field"
               >
                 {fleet.map((eq) => (
                   <option key={eq.id} value={eq.id}>
@@ -159,59 +153,55 @@ const Usage: React.FC = () => {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '24px', marginTop: '24px' }}>
 
             {/* LOG TELEMETRY FORM */}
-            <div
-              style={{
-                background: '#18181b',
-                border: '1px solid #27272a',
-                borderRadius: '16px',
-                padding: '24px',
-              }}
-            >
+            <div className="cat-card-panel">
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ padding: '8px', background: 'rgba(255, 205, 17, 0.1)', color: '#FFCD11', borderRadius: '8px' }}>
+                <div style={{ padding: '8px', background: 'rgba(255, 205, 17, 0.15)', color: '#FFCD11', borderRadius: '8px' }}>
                   <IonIcon icon={cloudUploadOutline} style={{ fontSize: '1.4rem' }} />
                 </div>
-                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700 }}>Log Daily Telemetry</h3>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>Log Daily Telemetry</h3>
               </div>
 
               <form onSubmit={handleLogUsage} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#a1a1aa', marginBottom: '4px' }}>Equipment ID</label>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>Equipment ID</label>
                   <input
                     type="text"
                     value={logForm.equipment_id}
                     onChange={(e) => setLogForm({ ...logForm, equipment_id: e.target.value })}
                     required
-                    style={{ width: '100%', padding: '10px', background: '#27272a', border: '1px solid #3f3f46', borderRadius: '8px', color: '#fff' }}
+                    className="cat-input-field"
+                    style={{ width: '100%' }}
                   />
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#a1a1aa', marginBottom: '4px' }}>Log Date</label>
+                    <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>Log Date</label>
                     <input
                       type="date"
                       value={logForm.log_date}
                       onChange={(e) => setLogForm({ ...logForm, log_date: e.target.value })}
                       required
-                      style={{ width: '100%', padding: '10px', background: '#27272a', border: '1px solid #3f3f46', borderRadius: '8px', color: '#fff' }}
+                      className="cat-input-field"
+                      style={{ width: '100%' }}
                     />
                   </div>
 
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#a1a1aa', marginBottom: '4px' }}>Operator ID</label>
+                    <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>Operator ID</label>
                     <input
                       type="text"
                       value={logForm.last_operator_id}
                       onChange={(e) => setLogForm({ ...logForm, last_operator_id: e.target.value })}
-                      style={{ width: '100%', padding: '10px', background: '#27272a', border: '1px solid #3f3f46', borderRadius: '8px', color: '#fff' }}
+                      className="cat-input-field"
+                      style={{ width: '100%' }}
                     />
                   </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#a1a1aa', marginBottom: '4px' }}>Engine Hours (0-24)</label>
+                    <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>Engine Hours (0-24)</label>
                     <input
                       type="number"
                       step="0.1"
@@ -220,12 +210,13 @@ const Usage: React.FC = () => {
                       value={logForm.engine_hours_day}
                       onChange={(e) => setLogForm({ ...logForm, engine_hours_day: parseFloat(e.target.value) || 0 })}
                       required
-                      style={{ width: '100%', padding: '10px', background: '#27272a', border: '1px solid #3f3f46', borderRadius: '8px', color: '#fff' }}
+                      className="cat-input-field"
+                      style={{ width: '100%' }}
                     />
                   </div>
 
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#a1a1aa', marginBottom: '4px' }}>Idle Hours (0-24)</label>
+                    <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>Idle Hours (0-24)</label>
                     <input
                       type="number"
                       step="0.1"
@@ -234,7 +225,8 @@ const Usage: React.FC = () => {
                       value={logForm.idle_hours_day}
                       onChange={(e) => setLogForm({ ...logForm, idle_hours_day: parseFloat(e.target.value) || 0 })}
                       required
-                      style={{ width: '100%', padding: '10px', background: '#27272a', border: '1px solid #3f3f46', borderRadius: '8px', color: '#fff' }}
+                      className="cat-input-field"
+                      style={{ width: '100%' }}
                     />
                   </div>
                 </div>
@@ -246,10 +238,10 @@ const Usage: React.FC = () => {
                     marginTop: '8px',
                     padding: '12px',
                     background: '#FFCD11',
-                    color: '#000',
+                    color: '#0b0d10',
                     border: 'none',
                     borderRadius: '8px',
-                    fontWeight: 700,
+                    fontWeight: 800,
                     cursor: 'pointer',
                   }}
                 >
@@ -259,15 +251,8 @@ const Usage: React.FC = () => {
             </div>
 
             {/* RECENT TELEMETRY TABLE */}
-            <div
-              style={{
-                background: '#18181b',
-                border: '1px solid #27272a',
-                borderRadius: '16px',
-                padding: '24px',
-              }}
-            >
-              <h3 style={{ margin: '0 0 16px 0', fontSize: '1.2rem', fontWeight: 700 }}>Telemetry Logs for {selectedId}</h3>
+            <div className="cat-card-panel">
+              <h3 style={{ margin: '0 0 16px 0', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>Telemetry Logs for {selectedId}</h3>
 
               <div style={{ maxHeight: '340px', overflowY: 'auto' }}>
                 <table className="asset-table" style={{ width: '100%' }}>
@@ -301,7 +286,7 @@ const Usage: React.FC = () => {
                     ))}
                     {history.length === 0 && (
                       <tr>
-                        <td colSpan={5} style={{ textAlign: 'center', color: '#94a3b8' }}>
+                        <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>
                           No historical telemetry found for this asset.
                         </td>
                       </tr>

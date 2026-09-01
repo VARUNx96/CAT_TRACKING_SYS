@@ -28,9 +28,8 @@ const Rentals: React.FC = () => {
     equipment_id: '',
     site_id: 'Bangalore',
     operator_id: 'OP101',
-    client_name: 'ABC Construction',
-    check_out_date: new Date().toISOString().split('T')[0],
-    expected_return_date: new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0],
+    client_name: 'L&T Infra',
+    expected_return_date: new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0],
   });
 
   // Resulting QR token and base64 image
@@ -58,7 +57,7 @@ const Rentals: React.FC = () => {
       if (fleetData.status === 'fulfilled') setFleet(fleetData.value);
       if (extData.status === 'fulfilled') setExtensions(extData.value);
     } catch (err) {
-      console.error(err);
+      console.error('Failed to load rentals data:', err);
     } finally {
       setLoading(false);
     }
@@ -66,17 +65,28 @@ const Rentals: React.FC = () => {
 
   async function handleCheckout(e: React.FormEvent) {
     e.preventDefault();
+    if (!checkoutData.equipment_id) {
+      alert('Please select an equipment to check out');
+      return;
+    }
     try {
       setLoading(true);
-      const event = await api.rentals.checkOut(checkoutData);
+      const event = await api.rentals.checkOut({
+        equipment_id: checkoutData.equipment_id,
+        site_id: checkoutData.site_id,
+        operator_id: checkoutData.operator_id,
+        client_name: checkoutData.client_name,
+        check_out_date: new Date().toISOString().split('T')[0],
+        expected_return_date: checkoutData.expected_return_date,
+      });
       if (event.qr_token) {
         const qrPayload = await api.rentals.getQRCode(event.qr_token);
         setQrResult({ token: qrPayload.qr_token, image: qrPayload.qr_image_base64 });
       }
-      alert(`Equipment ${checkoutData.equipment_id} successfully checked out!`);
+      alert(`Equipment ${checkoutData.equipment_id} checked out! QR generated.`);
       await loadData();
     } catch (err: any) {
-      alert(`Checkout failed: ${err.message}`);
+      alert(`Check-out failed: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -133,36 +143,23 @@ const Rentals: React.FC = () => {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '24px', marginTop: '20px' }}>
 
             {/* CHECK-OUT PANEL */}
-            <div
-              style={{
-                background: '#18181b',
-                border: '1px solid #27272a',
-                borderRadius: '16px',
-                padding: '24px',
-              }}
-            >
+            <div className="cat-card-panel">
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ padding: '8px', background: 'rgba(255, 205, 17, 0.1)', color: '#FFCD11', borderRadius: '8px' }}>
+                <div style={{ padding: '8px', background: 'rgba(255, 205, 17, 0.15)', color: '#FFCD11', borderRadius: '8px' }}>
                   <IonIcon icon={logOutOutline} style={{ fontSize: '1.4rem' }} />
                 </div>
-                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700 }}>1. Dispatch & Check-Out</h3>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>1. Dispatch & Check-Out</h3>
               </div>
 
               <form onSubmit={handleCheckout} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#a1a1aa', marginBottom: '4px' }}>Select Available Asset *</label>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>Select Available Asset *</label>
                   <select
                     value={checkoutData.equipment_id}
                     onChange={(e) => setCheckoutData({ ...checkoutData, equipment_id: e.target.value })}
                     required
-                    style={{
-                      width: '100%',
-                      padding: '10px',
-                      background: '#27272a',
-                      border: '1px solid #3f3f46',
-                      borderRadius: '8px',
-                      color: '#fff',
-                    }}
+                    className="cat-select-field"
+                    style={{ width: '100%', padding: '10px' }}
                   >
                     <option value="">-- Choose machine --</option>
                     {availableEquipment.map((eq) => (
@@ -175,42 +172,46 @@ const Rentals: React.FC = () => {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#a1a1aa', marginBottom: '4px' }}>Client Name</label>
+                    <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>Client Name</label>
                     <input
                       type="text"
                       value={checkoutData.client_name}
                       onChange={(e) => setCheckoutData({ ...checkoutData, client_name: e.target.value })}
-                      style={{ width: '100%', padding: '10px', background: '#27272a', border: '1px solid #3f3f46', borderRadius: '8px', color: '#fff' }}
+                      className="cat-input-field"
+                      style={{ width: '100%' }}
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#a1a1aa', marginBottom: '4px' }}>Site ID / Location</label>
+                    <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>Site ID / Location</label>
                     <input
                       type="text"
                       value={checkoutData.site_id}
                       onChange={(e) => setCheckoutData({ ...checkoutData, site_id: e.target.value })}
-                      style={{ width: '100%', padding: '10px', background: '#27272a', border: '1px solid #3f3f46', borderRadius: '8px', color: '#fff' }}
+                      className="cat-input-field"
+                      style={{ width: '100%' }}
                     />
                   </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#a1a1aa', marginBottom: '4px' }}>Operator ID</label>
+                    <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>Operator ID</label>
                     <input
                       type="text"
                       value={checkoutData.operator_id}
                       onChange={(e) => setCheckoutData({ ...checkoutData, operator_id: e.target.value })}
-                      style={{ width: '100%', padding: '10px', background: '#27272a', border: '1px solid #3f3f46', borderRadius: '8px', color: '#fff' }}
+                      className="cat-input-field"
+                      style={{ width: '100%' }}
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#a1a1aa', marginBottom: '4px' }}>Expected Return Date</label>
+                    <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>Expected Return Date</label>
                     <input
                       type="date"
                       value={checkoutData.expected_return_date}
                       onChange={(e) => setCheckoutData({ ...checkoutData, expected_return_date: e.target.value })}
-                      style={{ width: '100%', padding: '10px', background: '#27272a', border: '1px solid #3f3f46', borderRadius: '8px', color: '#fff' }}
+                      className="cat-input-field"
+                      style={{ width: '100%' }}
                     />
                   </div>
                 </div>
@@ -222,10 +223,10 @@ const Rentals: React.FC = () => {
                     marginTop: '8px',
                     padding: '12px',
                     background: '#FFCD11',
-                    color: '#000',
+                    color: '#0b0d10',
                     border: 'none',
                     borderRadius: '8px',
-                    fontWeight: 700,
+                    fontWeight: 800,
                     cursor: 'pointer',
                   }}
                 >
@@ -239,15 +240,15 @@ const Rentals: React.FC = () => {
                   style={{
                     marginTop: '20px',
                     padding: '16px',
-                    background: '#27272a',
+                    background: 'var(--bg-surface-muted)',
                     borderRadius: '12px',
                     textAlign: 'center',
                     border: '1px dashed #FFCD11',
                   }}
                 >
                   <IonIcon icon={qrCodeOutline} style={{ fontSize: '1.8rem', color: '#FFCD11' }} />
-                  <h4 style={{ margin: '4px 0', color: '#fff' }}>Contactless QR Token</h4>
-                  <p style={{ fontSize: '0.85rem', color: '#a1a1aa', margin: '4px 0 12px 0' }}>
+                  <h4 style={{ margin: '4px 0', color: 'var(--text-primary)' }}>Contactless QR Token</h4>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '4px 0 12px 0' }}>
                     Token: <code>{qrResult.token}</code>
                   </p>
                   <img
@@ -255,7 +256,7 @@ const Rentals: React.FC = () => {
                     alt="Check-in QR"
                     style={{ width: '180px', height: '180px', borderRadius: '8px', background: '#fff', padding: '8px' }}
                   />
-                  <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '8px' }}>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '8px' }}>
                     Print or show this QR to the operator. Scan upon machine return.
                   </p>
                 </div>
@@ -263,53 +264,49 @@ const Rentals: React.FC = () => {
             </div>
 
             {/* CHECK-IN PANEL */}
-            <div
-              style={{
-                background: '#18181b',
-                border: '1px solid #27272a',
-                borderRadius: '16px',
-                padding: '24px',
-              }}
-            >
+            <div className="cat-card-panel">
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ padding: '8px', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', borderRadius: '8px' }}>
+                <div style={{ padding: '8px', background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', borderRadius: '8px' }}>
                   <IonIcon icon={logInOutline} style={{ fontSize: '1.4rem' }} />
                 </div>
-                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700 }}>2. Return & Check-In</h3>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>2. Return & Check-In</h3>
               </div>
 
               <form onSubmit={handleCheckin} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#a1a1aa', marginBottom: '4px' }}>Scan or Enter QR Token</label>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>Scan or Enter QR Token</label>
                   <input
                     type="text"
                     placeholder="e.g. paste generated token"
                     value={checkinData.qr_token}
                     onChange={(e) => setCheckinData({ ...checkinData, qr_token: e.target.value })}
-                    style={{ width: '100%', padding: '10px', background: '#27272a', border: '1px solid #3f3f46', borderRadius: '8px', color: '#fff' }}
+                    className="cat-input-field"
+                    style={{ width: '100%' }}
                   />
                 </div>
 
-                <div style={{ textAlign: 'center', color: '#71717a', fontSize: '0.85rem' }}>— OR —</div>
+                <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>— OR —</div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#a1a1aa', marginBottom: '4px' }}>Equipment ID (Manual Return)</label>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>Equipment ID (Manual Return)</label>
                   <input
                     type="text"
                     placeholder="e.g. CAT-320-01 or EQX2001"
                     value={checkinData.equipment_id}
                     onChange={(e) => setCheckinData({ ...checkinData, equipment_id: e.target.value })}
-                    style={{ width: '100%', padding: '10px', background: '#27272a', border: '1px solid #3f3f46', borderRadius: '8px', color: '#fff' }}
+                    className="cat-input-field"
+                    style={{ width: '100%' }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#a1a1aa', marginBottom: '4px' }}>Check-In Date</label>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>Check-In Date</label>
                   <input
                     type="date"
                     value={checkinData.check_in_date}
                     onChange={(e) => setCheckinData({ ...checkinData, check_in_date: e.target.value })}
-                    style={{ width: '100%', padding: '10px', background: '#27272a', border: '1px solid #3f3f46', borderRadius: '8px', color: '#fff' }}
+                    className="cat-input-field"
+                    style={{ width: '100%' }}
                   />
                 </div>
 
@@ -336,7 +333,7 @@ const Rentals: React.FC = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#10b981', fontWeight: 600 }}>
                     <IonIcon icon={checkmarkCircleOutline} /> Return Confirmed
                   </div>
-                  <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: '#cbd5e1' }}>
+                  <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
                     Asset <strong>{checkinSuccess.equipment_id}</strong> is now marked <strong>Available</strong> for immediate re-dispatch.
                   </p>
                 </div>

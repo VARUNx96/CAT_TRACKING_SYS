@@ -169,9 +169,10 @@ const Alerts: React.FC = () => {
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    background: '#27272a',
+                    background: 'var(--bg-surface-muted)',
+                    border: '1px solid var(--border-color)',
                     padding: '16px',
-                    borderRadius: '12px',
+                    borderRadius: '10px',
                     borderLeft: `4px solid ${
                       alertItem.severity === 'CRITICAL' || alertItem.severity === 'HIGH'
                         ? '#ef4444'
@@ -196,14 +197,15 @@ const Alerts: React.FC = () => {
 
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <strong style={{ color: '#fff', fontSize: '1rem' }}>{alertItem.equipment_id}</strong>
+                        <strong style={{ color: 'var(--text-primary)', fontSize: '1rem' }}>{alertItem.equipment_id}</strong>
                         <span
                           style={{
                             fontSize: '0.75rem',
                             padding: '2px 8px',
                             borderRadius: '4px',
-                            background: '#3f3f46',
-                            color: '#e4e4e7',
+                            background: 'var(--bg-surface)',
+                            border: '1px solid var(--border-color)',
+                            color: 'var(--text-primary)',
                             fontWeight: 600,
                           }}
                         >
@@ -219,7 +221,7 @@ const Alerts: React.FC = () => {
                           [{alertItem.severity}]
                         </span>
                       </div>
-                      <p style={{ margin: '4px 0 0 0', color: '#cbd5e1', fontSize: '0.9rem' }}>{alertItem.message}</p>
+                      <p style={{ margin: '4px 0 0 0', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{alertItem.message}</p>
                     </div>
                   </div>
 

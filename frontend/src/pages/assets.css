@@ -3,92 +3,105 @@
 ================================ */
 
 .assets-page {
-    --cat-yellow: #ffcd00;
-    --cat-black: #111111;
-    --text-primary: #1f1f1f;
-    --text-secondary: #6b6b6b;
-    --border: #e3e3e3;
-    --surface: #ffffff;
-    --surface-muted: #f7f7f7;
-  
-    --status-green: #2f7d32;
-    --status-green-bg: #edf7ed;
-  
-    --status-yellow: #8a6800;
-    --status-yellow-bg: #fff6dc;
-  
-    --status-red: #a13b3b;
-    --status-red-bg: #fbeeee;
-  
-    background: #f4f4f4;
-    color: var(--text-primary);
-  }
+  --cat-yellow: #FFCD11;
+  --cat-black: #0b0d10;
+  --text-primary: var(--text-primary);
+  --text-secondary: var(--text-secondary);
+  --border: var(--border-color);
+  --surface: var(--bg-surface);
+  --surface-muted: var(--bg-surface-muted);
 
-  /* ================================
-     DARK MODE OVERRIDES FOR ASSETS & SUBPAGES
-  ================================ */
-  .dark-mode .assets-page,
-  body.dark-mode .assets-page {
-    --text-primary: #f4f4f5;
-    --text-secondary: #a1a1aa;
-    --border: #27272a;
-    --surface: #18181b;
-    --surface-muted: #27272a;
-    --cat-black: #FFCD11;
+  --status-green: #10B981;
+  --status-green-bg: rgba(16, 185, 129, 0.15);
 
-    background: #09090b !important;
-    color: #f4f4f5 !important;
-  }
+  --status-yellow: #f59e0b;
+  --status-yellow-bg: rgba(245, 158, 11, 0.15);
 
-  .dark-mode .asset-summary-card,
-  body.dark-mode .asset-summary-card,
-  .dark-mode .asset-table-card,
-  body.dark-mode .asset-table-card,
-  .dark-mode .asset-toolbar,
-  body.dark-mode .asset-toolbar,
-  .dark-mode .modal-card,
-  body.dark-mode .modal-card {
-    background: #18181b !important;
-    border-color: #27272a !important;
-    color: #f4f4f5 !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
-  }
+  --status-red: #ef4444;
+  --status-red-bg: rgba(239, 68, 68, 0.15);
 
-  .dark-mode .asset-search input,
-  body.dark-mode .asset-search input,
-  .dark-mode .asset-filter select,
-  body.dark-mode .asset-filter select,
-  .dark-mode .modal-form input,
-  body.dark-mode .modal-form input,
-  .dark-mode .modal-form select,
-  body.dark-mode .modal-form select {
-    background: #27272a !important;
-    border-color: #3f3f46 !important;
-    color: #f4f4f5 !important;
-  }
+  background: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
 
-  .dark-mode .asset-table th,
-  body.dark-mode .asset-table th {
-    background: #27272a !important;
-    color: #a1a1aa !important;
-    border-bottom-color: #3f3f46 !important;
-  }
+/* UNIVERSAL PANEL AND CARD HELPERS */
+.cat-card-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  color: var(--text-primary);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
 
-  .dark-mode .asset-table td,
-  body.dark-mode .asset-table td {
-    border-bottom-color: #27272a !important;
-    color: #e4e4e7 !important;
-  }
+.cat-input-field {
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--input-text);
+  border-radius: 8px;
+  padding: 10px 14px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+}
 
-  .dark-mode .asset-table tr:hover,
-  body.dark-mode .asset-table tr:hover {
-    background: #202023 !important;
-  }
+.cat-input-field:focus {
+  border-color: #FFCD11;
+}
 
-  .dark-mode .asset-title-row ion-icon,
-  body.dark-mode .asset-title-row ion-icon {
-    color: #FFCD11 !important;
-  }
+.cat-select-field {
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--input-text);
+  border-radius: 8px;
+  padding: 8px 12px;
+  outline: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* ================================
+   THEME OVERRIDES FOR ASSETS & SUBPAGES
+================================ */
+.asset-summary-card,
+.asset-table-card,
+.asset-toolbar,
+.modal-card {
+  background: var(--bg-surface) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+}
+
+.asset-search input,
+.asset-filter select,
+.modal-form input,
+.modal-form select {
+  background: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--input-text) !important;
+}
+
+.asset-table th {
+  background: var(--bg-surface-muted) !important;
+  color: var(--text-secondary) !important;
+  border-bottom-color: var(--border-color) !important;
+}
+
+.asset-table td {
+  border-bottom-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.asset-table tr:hover {
+  background: var(--bg-surface-muted) !important;
+}
+
+.asset-title-row ion-icon {
+  color: #FFCD11 !important;
+}
 
   
   /* ================================

@@ -1,5 +1,6 @@
 /* =========================================================
    CATERPILLAR INDUSTRIAL COMMAND-CENTER TOP NAVBAR
+   THEME-AWARE: SEAMLESS DARK & LIGHT MODE ADAPTATION
    ========================================================= */
 
 .cat-top-navbar {
@@ -8,13 +9,14 @@
   justify-content: space-between;
   gap: 16px;
   padding: 12px 24px;
-  background: #111418;
+  background: var(--topbar-bg);
   border-bottom: 2px solid #FFCD11;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   position: sticky;
   top: 0;
   z-index: 999;
   box-sizing: border-box;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 /* LEFT: DASHBOARD RETURN + BREADCRUMB */
@@ -57,18 +59,18 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #9ca3af;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
 .cat-nav-breadcrumb .divider {
-  color: #4b5563;
+  color: var(--text-muted);
   font-weight: 700;
 }
 
 .cat-nav-breadcrumb .current-title {
-  color: #f3f4f6;
-  font-weight: 700;
+  color: var(--text-primary);
+  font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   font-size: 13px;
@@ -88,26 +90,26 @@
   gap: 6px;
   padding: 7px 14px;
   border-radius: 4px;
-  background: #1a1e24;
-  color: #d1d5db !important;
+  background: var(--bg-surface-muted);
+  color: var(--text-primary) !important;
   text-decoration: none;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.03em;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-color);
   transition: all 0.2s;
 }
 
 .cat-nav-pill ion-icon {
   font-size: 15px;
-  color: #9ca3af;
+  color: var(--text-secondary);
   transition: color 0.2s;
 }
 
 .cat-nav-pill:hover {
-  background: #242b35;
-  color: #ffffff !important;
-  border-color: rgba(255, 205, 17, 0.4);
+  background: var(--bg-surface);
+  color: var(--text-primary) !important;
+  border-color: #FFCD11;
 }
 
 .cat-nav-pill:hover ion-icon {
@@ -116,9 +118,14 @@
 
 .cat-nav-pill.active {
   background: rgba(255, 205, 17, 0.15);
-  color: #FFCD11 !important;
+  color: #d97706 !important;
   border-color: #FFCD11;
   box-shadow: 0 0 10px rgba(255, 205, 17, 0.2);
+}
+
+.dark-mode .cat-nav-pill.active,
+[data-theme="dark"] .cat-nav-pill.active {
+  color: #FFCD11 !important;
 }
 
 .cat-nav-pill.active ion-icon {
@@ -138,16 +145,15 @@
   align-items: center;
   gap: 8px;
   padding: 6px 12px;
-  background: #181d24;
-  border: 1px solid rgba(255, 205, 17, 0.35);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
-  color: #f3f4f6;
+  color: var(--text-primary);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .cat-nav-profile-btn:hover {
-  background: #222933;
   border-color: #FFCD11;
   box-shadow: 0 0 12px rgba(255, 205, 17, 0.25);
 }
@@ -163,7 +169,7 @@
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.03em;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 /* THEME TOGGLE */
@@ -172,10 +178,10 @@
   align-items: center;
   gap: 6px;
   padding: 7px 12px;
-  background: #181d24;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
-  color: #e5e7eb;
+  color: var(--text-primary);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -183,8 +189,6 @@
 }
 
 .cat-theme-toggle-btn:hover {
-  background: #242b35;
-  color: #ffffff;
   border-color: #FFCD11;
 }
 
@@ -194,15 +198,20 @@
   align-items: center;
   gap: 6px;
   padding: 7px 14px;
-  background: rgba(220, 38, 38, 0.15);
-  border: 1px solid rgba(220, 38, 38, 0.5);
+  background: rgba(220, 38, 38, 0.12);
+  border: 1px solid rgba(220, 38, 38, 0.4);
   border-radius: 4px;
-  color: #fca5a5;
+  color: #dc2626;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.04em;
   cursor: pointer;
   transition: all 0.2s;
+}
+
+.dark-mode .cat-nav-logout-btn,
+[data-theme="dark"] .cat-nav-logout-btn {
+  color: #fca5a5;
 }
 
 .cat-nav-logout-btn ion-icon {

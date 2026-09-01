@@ -55,11 +55,11 @@ const OperatorGuides: React.FC = () => {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '24px', marginTop: '24px' }}>
 
             {/* SOP 1: CHECKOUT */}
-            <div style={{ background: '#18181b', border: '1px solid #27272a', borderRadius: '16px', padding: '24px' }}>
+            <div className="cat-card-panel">
               <h3 style={{ margin: '0 0 12px 0', color: '#FFCD11', fontSize: '1.2rem', fontWeight: 700 }}>
                 Step 1: Check-Out & Dispatch
               </h3>
-              <ol style={{ paddingLeft: '20px', color: '#cbd5e1', lineHeight: '1.8', margin: 0 }}>
+              <ol style={{ paddingLeft: '20px', color: 'var(--text-secondary)', lineHeight: '1.8', margin: 0 }}>
                 <li>Select machine from <strong>Rentals → Dispatch</strong>.</li>
                 <li>Enter the client name, site location, and expected return date.</li>
                 <li>Submit the form to generate the encrypted <strong>QR Token</strong>.</li>
@@ -68,11 +68,11 @@ const OperatorGuides: React.FC = () => {
             </div>
 
             {/* SOP 2: RETURN */}
-            <div style={{ background: '#18181b', border: '1px solid #27272a', borderRadius: '16px', padding: '24px' }}>
+            <div className="cat-card-panel">
               <h3 style={{ margin: '0 0 12px 0', color: '#10b981', fontSize: '1.2rem', fontWeight: 700 }}>
                 Step 2: Check-In & Machine Return
               </h3>
-              <ol style={{ paddingLeft: '20px', color: '#cbd5e1', lineHeight: '1.8', margin: 0 }}>
+              <ol style={{ paddingLeft: '20px', color: 'var(--text-secondary)', lineHeight: '1.8', margin: 0 }}>
                 <li>When the machine returns, scan the QR code token at the depot gate.</li>
                 <li>If the QR code is lost, enter the <strong>Equipment ID</strong> manually.</li>
                 <li>Verify return date and click <strong>Verify Return</strong>.</li>
@@ -81,11 +81,11 @@ const OperatorGuides: React.FC = () => {
             </div>
 
             {/* SOP 3: TELEMETRY & IDLE TIME */}
-            <div style={{ background: '#18181b', border: '1px solid #27272a', borderRadius: '16px', padding: '24px' }}>
+            <div className="cat-card-panel">
               <h3 style={{ margin: '0 0 12px 0', color: '#3b82f6', fontSize: '1.2rem', fontWeight: 700 }}>
                 Step 3: Telemetry & Anomaly Prevention
               </h3>
-              <ul style={{ paddingLeft: '20px', color: '#cbd5e1', lineHeight: '1.8', margin: 0 }}>
+              <ul style={{ paddingLeft: '20px', color: 'var(--text-secondary)', lineHeight: '1.8', margin: 0 }}>
                 <li>Log daily engine hours and idle hours in <strong>Usage & Telemetry</strong>.</li>
                 <li>Idle ratios exceeding <strong>60%</strong> trigger automatic AI anomaly alerts.</li>
                 <li>Machines operating without an assigned operator ID trigger compliance notices.</li>
@@ -93,14 +93,14 @@ const OperatorGuides: React.FC = () => {
             </div>
 
             {/* QR TEST STATION */}
-            <div style={{ background: '#18181b', border: '1px solid #27272a', borderRadius: '16px', padding: '24px' }}>
+            <div className="cat-card-panel">
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
                 <IonIcon icon={qrCodeOutline} style={{ color: '#FFCD11', fontSize: '1.4rem' }} />
-                <h3 style={{ margin: 0, color: '#fff', fontSize: '1.2rem', fontWeight: 700 }}>
+                <h3 style={{ margin: 0, color: 'var(--text-primary)', fontSize: '1.2rem', fontWeight: 700 }}>
                   Interactive QR Token Simulator
                 </h3>
               </div>
-              <p style={{ color: '#94a3b8', fontSize: '0.85rem', margin: '0 0 12px 0' }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '0 0 12px 0' }}>
                 Test QR code generation for scanning drills without modifying database state.
               </p>
 
@@ -110,7 +110,8 @@ const OperatorGuides: React.FC = () => {
                   value={testId}
                   onChange={(e) => setTestId(e.target.value)}
                   placeholder="Asset ID"
-                  style={{ flex: 1, padding: '10px', background: '#27272a', border: '1px solid #3f3f46', borderRadius: '8px', color: '#fff' }}
+                  className="cat-input-field"
+                  style={{ flex: 1 }}
                 />
                 <button
                   onClick={handleGenerateTestQR}
@@ -120,9 +121,9 @@ const OperatorGuides: React.FC = () => {
                     background: '#FFCD11',
                     border: 'none',
                     borderRadius: '8px',
-                    fontWeight: 700,
+                    fontWeight: 800,
                     cursor: 'pointer',
-                    color: '#000',
+                    color: '#0b0d10',
                   }}
                 >
                   Generate QR
@@ -130,13 +131,13 @@ const OperatorGuides: React.FC = () => {
               </div>
 
               {testQR && (
-                <div style={{ textAlign: 'center', padding: '12px', background: '#27272a', borderRadius: '12px' }}>
+                <div style={{ textAlign: 'center', padding: '12px', background: 'var(--bg-surface-muted)', border: '1px solid var(--border-color)', borderRadius: '12px' }}>
                   <img
                     src={`data:image/png;base64,${testQR.image}`}
                     alt="Demo QR"
                     style={{ width: '160px', height: '160px', borderRadius: '8px', background: '#fff', padding: '6px' }}
                   />
-                  <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: '8px 0 0 0' }}>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '8px 0 0 0' }}>
                     Token: <code>{testQR.token}</code>
                   </p>
                 </div>

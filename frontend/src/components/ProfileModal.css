@@ -1,11 +1,12 @@
 /* =========================================================
    CATERPILLAR OPERATOR PROFILE HUD MODAL
+   THEME-AWARE: SEAMLESS DARK & LIGHT MODE ADAPTATION
    ========================================================= */
 
 .cat-profile-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(8, 10, 13, 0.75);
+  background: rgba(8, 10, 13, 0.7);
   backdrop-filter: blur(8px);
   z-index: 9999;
   display: flex;
@@ -18,13 +19,15 @@
 .cat-profile-modal {
   width: 100%;
   max-width: 540px;
-  background: #14171c;
-  color: #f3f4f6;
+  background: var(--bg-surface);
+  color: var(--text-primary);
   border-radius: 12px;
-  border: 1px solid rgba(255, 205, 17, 0.35);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 205, 17, 0.15);
+  border: 1px solid var(--border-color);
+  border-top: 3px solid #FFCD11;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), 0 0 25px rgba(255, 205, 17, 0.15);
   overflow: hidden;
   animation: catScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 @keyframes catFadeIn {
@@ -43,8 +46,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px 24px;
-  background: #0d1014;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-surface-elevated);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .cat-profile-badge-top {
@@ -52,7 +55,7 @@
   align-items: center;
   gap: 10px;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.1em;
   color: #FFCD11;
   text-transform: uppercase;
@@ -77,7 +80,7 @@
 .cat-close-btn {
   background: transparent;
   border: none;
-  color: #9ca3af;
+  color: var(--text-secondary);
   font-size: 24px;
   cursor: pointer;
   display: flex;
@@ -89,8 +92,8 @@
 }
 
 .cat-close-btn:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  background: var(--bg-surface-muted);
 }
 
 /* HERO */
@@ -99,15 +102,15 @@
   align-items: center;
   gap: 20px;
   padding: 26px 28px;
-  background: linear-gradient(180deg, rgba(255, 205, 17, 0.08) 0%, transparent 100%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(180deg, rgba(255, 205, 17, 0.1) 0%, transparent 100%);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .cat-avatar-ring {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: #1e2229;
+  background: var(--bg-surface-elevated);
   border: 2px solid #FFCD11;
   box-shadow: 0 0 15px rgba(255, 205, 17, 0.35);
   display: flex;
@@ -123,7 +126,7 @@
   font-size: 22px;
   font-weight: 800;
   letter-spacing: 0.02em;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .cat-role-tag {
@@ -131,12 +134,17 @@
   padding: 4px 12px;
   border-radius: 4px;
   background: rgba(255, 205, 17, 0.15);
-  color: #FFCD11;
-  border: 1px solid rgba(255, 205, 17, 0.35);
+  color: #b45309;
+  border: 1px solid rgba(255, 205, 17, 0.4);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.dark-mode .cat-role-tag,
+[data-theme="dark"] .cat-role-tag {
+  color: #FFCD11;
 }
 
 /* FIELDS GRID */
@@ -152,22 +160,23 @@
   align-items: center;
   gap: 16px;
   padding: 14px 18px;
-  background: #0f1216;
+  background: var(--bg-surface-muted);
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-color);
   transition: border-color 0.2s;
 }
 
 .cat-profile-field:hover {
-  border-color: rgba(255, 205, 17, 0.3);
+  border-color: rgba(255, 205, 17, 0.5);
 }
 
 .field-icon {
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  background: #1c2028;
+  background: var(--bg-surface);
   color: #FFCD11;
+  border: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -186,20 +195,26 @@
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
-  color: #9ca3af;
+  color: var(--text-secondary);
   text-transform: uppercase;
 }
 
 .field-val {
   font-size: 14px;
   font-weight: 600;
-  color: #e5e7eb;
+  color: var(--text-primary);
   line-height: 1.4;
 }
 
 .email-val {
-  color: #FFCD11;
+  color: #d97706;
+  font-weight: 700;
   word-break: break-all;
+}
+
+.dark-mode .email-val,
+[data-theme="dark"] .email-val {
+  color: #FFCD11;
 }
 
 .font-mono {
@@ -208,7 +223,7 @@
 }
 
 .highlight-green {
-  color: #34d399;
+  color: #10B981;
   font-weight: 700;
 }
 
@@ -219,14 +234,14 @@
   justify-content: flex-end;
   gap: 12px;
   padding: 18px 28px;
-  background: #0d1014;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-surface-elevated);
+  border-top: 1px solid var(--border-color);
 }
 
 .cat-modal-close-btn {
-  background: #1e2229;
-  color: #e5e7eb;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   padding: 10px 20px;
   font-size: 13px;
@@ -237,8 +252,7 @@
 }
 
 .cat-modal-close-btn:hover {
-  background: #2a303c;
-  color: #ffffff;
+  background: var(--bg-surface-muted);
 }
 
 .cat-modal-logout-btn {
