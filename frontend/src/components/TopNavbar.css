@@ -1,0 +1,167 @@
+/* =========================================================
+   TOP NAVBAR STYLES — HIGH VISIBILITY DASHBOARD RETURN & THEME
+   ========================================================= */
+
+.cat-top-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 20px;
+  margin-bottom: 24px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  transition: background 0.2s ease, border-color 0.2s ease;
+  position: sticky;
+  top: 10px;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+}
+
+.dark-mode .cat-top-navbar {
+  background: #18181b;
+  border-color: #27272a;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Left section with Dashboard button and Brand */
+.cat-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* HIGH-VISIBILITY CATERPILLAR YELLOW DASHBOARD BUTTON */
+.cat-return-dashboard-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #FFCD11 !important;
+  color: #000000 !important;
+  border: none !important;
+  padding: 10px 18px !important;
+  border-radius: 10px !important;
+  font-size: 0.95rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 205, 17, 0.35);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+}
+
+.cat-return-dashboard-btn ion-icon {
+  font-size: 1.25rem;
+  stroke-width: 32px;
+  color: #000000 !important;
+}
+
+.cat-return-dashboard-btn:hover {
+  background: #f5c400 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(255, 205, 17, 0.5);
+}
+
+.cat-return-dashboard-btn:active {
+  transform: translateY(0);
+}
+
+/* Page badge / breadcrumb */
+.cat-nav-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.cat-nav-breadcrumb .divider {
+  color: var(--text-muted);
+}
+
+.cat-nav-breadcrumb .current-title {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* Quick Navigation Links */
+.cat-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.cat-nav-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.cat-nav-pill:hover {
+  background: var(--bg-surface-muted);
+  color: var(--text-primary);
+}
+
+.dark-mode .cat-nav-pill:hover {
+  background: #27272a;
+  color: #fff;
+}
+
+.cat-nav-pill.active {
+  background: rgba(255, 205, 17, 0.15);
+  color: #FFCD11;
+  border-color: rgba(255, 205, 17, 0.3);
+}
+
+/* Right section: theme toggle */
+.cat-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cat-theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: var(--bg-surface-muted);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dark-mode .cat-theme-toggle-btn {
+  background: #27272a;
+  border-color: #3f3f46;
+  color: #f4f4f5;
+}
+
+.cat-theme-toggle-btn:hover {
+  border-color: #FFCD11;
+  color: #FFCD11;
+}
+
+@media (max-width: 900px) {
+  .cat-nav-links {
+    display: none;
+  }
+}

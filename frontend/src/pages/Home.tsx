@@ -5,7 +5,6 @@ import {
   constructOutline,
   analyticsOutline,
   notificationsOutline,
-  settingsOutline,
   moonOutline,
   sunnyOutline,
   swapHorizontalOutline,
@@ -21,11 +20,12 @@ import {
   ForecastResponse,
   AnomalyResult,
 } from '../services/api';
+import { getInitialTheme, toggleTheme, Theme } from '../utils/theme';
 
 import './Home.css';
 
 const Home: React.FC = () => {
-  const [darkMode, setDarkMode] = useState(false);
+  const [theme, setTheme] = useState<Theme>(getInitialTheme());
   const [summary, setSummary] = useState<DashboardSummary>({
     total_equipment: 0,
     rented: 0,
@@ -67,6 +67,12 @@ const Home: React.FC = () => {
     }
 
     loadDashboardData();
+
+    function handleThemeChange(e: any) {
+      if (e.detail?.theme) setTheme(e.detail.theme);
+    }
+    window.addEventListener('cat-theme-changed', handleThemeChange);
+    return () => window.removeEventListener('cat-theme-changed', handleThemeChange);
   }, []);
 
   const stats = [
@@ -97,7 +103,7 @@ const Home: React.FC = () => {
   ];
 
   return (
-    <IonPage className={darkMode ? 'dark-mode' : ''}>
+    <IonPage className={theme === 'dark' ? 'dark-mode' : ''}>
       <IonContent fullscreen className="home-page">
         <div className="home-layout">
 
@@ -153,20 +159,18 @@ const Home: React.FC = () => {
             </nav>
 
             <div className="sidebar-bottom">
-              <a className="menu-item" href="/settings">
-                <IonIcon icon={settingsOutline} />
-                <span>Settings</span>
-              </a>
-
               <button
                 className="theme-button"
-                onClick={() => setDarkMode(!darkMode)}
+                onClick={() => {
+                  const next = toggleTheme();
+                  setTheme(next);
+                }}
               >
                 <IonIcon
-                  icon={darkMode ? sunnyOutline : moonOutline}
+                  icon={theme === 'dark' ? sunnyOutline : moonOutline}
                 />
                 <span>
-                  {darkMode ? 'Light Mode' : 'Dark Mode'}
+                  {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
                 </span>
               </button>
             </div>

@@ -13,6 +13,7 @@ import {
 } from 'ionicons/icons';
 
 import { api } from '../services/api';
+import TopNavbar from '../components/TopNavbar';
 import './Assets.css';
 
 const OperatorGuides: React.FC = () => {
@@ -39,27 +40,7 @@ const OperatorGuides: React.FC = () => {
         <div className="assets-container">
 
           {/* TOP NAV BAR */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-            <button
-              onClick={() => { window.location.href = '/home'; }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                color: '#f8fafc',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                padding: '8px 16px',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: 600,
-              }}
-            >
-              <IonIcon icon={arrowBackOutline} />
-              Dashboard
-            </button>
-            <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>/ Operator Guides & Tutorials</span>
-          </div>
+          <TopNavbar currentTitle="Operator Guides & SOPs" activePath="/operator-guides" />
 
           <header className="assets-header">
             <div>

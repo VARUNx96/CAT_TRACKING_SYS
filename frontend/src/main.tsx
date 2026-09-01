@@ -15,6 +15,10 @@ import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 
 import './theme/variables.css';
+import { getInitialTheme, applyTheme } from './utils/theme';
+
+// Ensure theme is applied globally across the entire DOM at launch
+applyTheme(getInitialTheme());
 
 const container = document.getElementById('root');
 const root = createRoot(container!);

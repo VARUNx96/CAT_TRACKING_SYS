@@ -15,6 +15,7 @@ import {
 } from 'ionicons/icons';
 
 import { api, CheckEvent, Recommendation, EquipmentDashboardRow } from '../services/api';
+import TopNavbar from '../components/TopNavbar';
 import './Assets.css';
 
 const Rentals: React.FC = () => {
@@ -117,27 +118,7 @@ const Rentals: React.FC = () => {
         <div className="assets-container">
 
           {/* TOP NAV BAR */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-            <button
-              onClick={() => { window.location.href = '/home'; }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                color: '#f8fafc',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                padding: '8px 16px',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: 600,
-              }}
-            >
-              <IonIcon icon={arrowBackOutline} />
-              Dashboard
-            </button>
-            <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>/ Rentals Management</span>
-          </div>
+          <TopNavbar currentTitle="Rentals & Traceability" activePath="/rentals" />
 
           <header className="assets-header">
             <div>
