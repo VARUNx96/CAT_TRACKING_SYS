@@ -9,7 +9,7 @@ DynamoDB schema and GSIs configured in Terraform:
 """
 import logging
 import time
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from decimal import Decimal
 from typing import Any
 
@@ -132,6 +132,7 @@ class DynamoRepository:
             "SerialNumber": serial_number or f"SN-{equipment_id}",
             "ClientName": client_name,
             "Status": status,
+            "CreatedAt": datetime.utcnow().isoformat(),
             "EngineHoursPerDay": Decimal("0.0"),
             "IdleHoursPerDay": Decimal("0.0"),
             "OperatingDays": 0,
@@ -413,6 +414,7 @@ class DynamoRepository:
             "client_name": data.get("ClientName"),
             "client": data.get("ClientName") or "—",
             "status": data.get("Status", "Available"),
+            "created_at": data.get("CreatedAt"),
             "check_out_date": data.get("CheckOutDate"),
             "check_in_date": data.get("CheckInDate"),
             "expected_return_date": data.get("ExpectedReturnDate"),

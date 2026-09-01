@@ -5,14 +5,18 @@ Run with:  uvicorn main:app --reload
 import logging
 from contextlib import asynccontextmanager
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+load_dotenv()
 
 from db.session import init_db
 from jobs.scheduler import start_scheduler, shutdown_scheduler
 from routers import equipment, checkinout, usage, alerts, forecast, anomalies
 
 logging.basicConfig(level=logging.INFO)
+
 
 
 @asynccontextmanager
