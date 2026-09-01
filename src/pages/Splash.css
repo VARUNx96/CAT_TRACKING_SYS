@@ -1,0 +1,52 @@
+.splash-page {
+    --background: #ffcd00;
+  }
+
+.splash-container {
+    width: 100%;
+    height: 100%;
+  
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  
+    text-align: center;
+    box-sizing: border-box;
+  
+    background: #ffcd00;
+  }
+  
+  .splash-logo {
+    width: 500px;
+    height: auto;
+    display: block;
+    margin: 0 auto 25px;
+  }
+  
+  .splash-container h1 {
+    margin: 0;
+    color: black;
+    font-size: 36px;
+    font-weight: 700;
+  }
+  
+  .splash-container p {
+    color: black;
+    font-size: 16px;
+    margin: 10px 0 32px;
+  }
+  
+  .splash-button {
+    border: none;
+    background: #171717;
+    color: #ffcd00;
+  
+    padding: 14px 32px;
+    border-radius: 8px;
+  
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+ 
