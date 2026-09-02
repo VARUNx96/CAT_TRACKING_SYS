@@ -55,3 +55,36 @@ output "db_operator_secret_access_key" {
   sensitive   = true
   description = "Secret Access Key for the database operator"
 }
+
+# 6. Allow the EC2 instance role to access DynamoDB
+resource "aws_iam_role_policy" "ec2_dynamodb_access" {
+  name = "SmartRentalDynamoDBAccess"
+  role = "smart-rental-ec2-role"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [
+      {
+        Sid    = "AllowDynamoDBDataOperations"
+        Effect = "Allow"
+
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:BatchGetItem",
+          "dynamodb:Query",
+          "dynamodb:Scan",
+          "dynamodb:PutItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:BatchWriteItem"
+        ]
+
+        Resource = [
+          aws_dynamodb_table.smart_rental_tracking.arn,
+          "${aws_dynamodb_table.smart_rental_tracking.arn}/index/*"
+        ]
+      }
+    ]
+  })
+}
