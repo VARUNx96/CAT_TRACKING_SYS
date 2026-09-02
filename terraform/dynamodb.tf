@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-east-1" # Set your preferred AWS region
+  region = "us-east-1"
 }
 
 resource "aws_dynamodb_table" "smart_rental_tracking" {
@@ -8,7 +8,6 @@ resource "aws_dynamodb_table" "smart_rental_tracking" {
   hash_key     = "EquipmentID"
   range_key    = "CheckOutDate"
 
-  # Base table key attributes
   attribute {
     name = "EquipmentID"
     type = "S"
@@ -19,7 +18,7 @@ resource "aws_dynamodb_table" "smart_rental_tracking" {
     type = "S"
   }
 
-  # Additional attributes needed for GSIs
+
   attribute {
     name = "SiteID"
     type = "S"
@@ -35,7 +34,6 @@ resource "aws_dynamodb_table" "smart_rental_tracking" {
     type = "S"
   }
 
-  # GSI 1: Site-wise querying (Asset Dashboard & Site Logs)
   global_secondary_index {
     name            = "SiteID-CheckInDate-index"
     hash_key        = "SiteID"
@@ -43,7 +41,6 @@ resource "aws_dynamodb_table" "smart_rental_tracking" {
     projection_type = "ALL"
   }
 
-  # GSI 2: Equipment type querying (Demand Forecasting & Utilization)
   global_secondary_index {
     name            = "Type-CheckOutDate-index"
     hash_key        = "Type"

@@ -1,13 +1,13 @@
 resource "aws_cognito_user_pool" "rental_users" {
   name = "smart-rental-users"
 
-  # Users sign in using their email address
+
   username_attributes = ["email"]
 
-  # Cognito automatically sends email verification
+
   auto_verified_attributes = ["email"]
 
-  # No MFA for the initial implementation
+
   mfa_configuration = "OFF"
 
   password_policy {
@@ -19,7 +19,7 @@ resource "aws_cognito_user_pool" "rental_users" {
     temporary_password_validity_days = 7
   }
 
-  # Send a verification code to the user's email
+
   verification_message_template {
     default_email_option = "CONFIRM_WITH_CODE"
   }
@@ -41,7 +41,7 @@ resource "aws_cognito_user_pool_client" "frontend" {
   name         = "smart-rental-frontend"
   user_pool_id = aws_cognito_user_pool.rental_users.id
 
-  # Frontend/mobile clients must not have a client secret
+
   generate_secret = false
 
   explicit_auth_flows = [

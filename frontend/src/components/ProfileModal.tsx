@@ -5,12 +5,11 @@ import {
   mailOutline,
   shieldCheckmarkOutline,
   serverOutline,
-  logOutOutline,
   closeOutline,
   idCardOutline,
 } from 'ionicons/icons';
 
-import { getUserProfile, UserProfile, performLogout } from '../utils/userProfile';
+import { getUserProfile, UserProfile} from '../utils/userProfile';
 import './ProfileModal.css';
 
 interface ProfileModalProps {
@@ -100,15 +99,12 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
         </div>
 
         {/* MODAL ACTIONS */}
-        <div className="cat-profile-actions">
-          <button className="cat-modal-logout-btn" onClick={performLogout}>
-            <IonIcon icon={logOutOutline} />
-            <span>End Session & Sign Out</span>
-          </button>
-          <button className="cat-modal-close-btn" onClick={onClose}>
-            Back to Dashboard
-          </button>
-        </div>
+        {/* MODAL ACTIONS */}
+<div className="cat-profile-actions">
+  <button className="cat-modal-close-btn" onClick={onClose}>
+    Back to Dashboard
+  </button>
+</div>
       </div>
     </div>
   );

@@ -252,8 +252,12 @@ const Home: React.FC = () => {
   const handleLogout = async () => {
     try {
       await signOut();
-
-      window.location.href = '/login';
+  
+      // Clear any dashboard/session cache
+      sessionStorage.removeItem('cat_dashboard_cache');
+  
+      // Redirect to login
+      window.location.replace('/login');
     } catch (error) {
       console.error('Logout error:', error);
     }

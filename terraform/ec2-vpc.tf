@@ -51,7 +51,7 @@ resource "aws_security_group" "smart_rental_ec2" {
 
   vpc_id = aws_vpc.smart_rental_vpc.id
 
-  # SSH
+
 
   ingress {
 
@@ -97,7 +97,7 @@ resource "aws_security_group" "smart_rental_ec2" {
 
   }
 
-  # HTTP
+
 
   ingress {
 
@@ -113,7 +113,7 @@ resource "aws_security_group" "smart_rental_ec2" {
 
   }
 
-  # HTTPS
+
 
   ingress {
 
@@ -129,7 +129,7 @@ resource "aws_security_group" "smart_rental_ec2" {
 
   }
 
-  # Allow all outbound traffic
+
 
   egress {
 

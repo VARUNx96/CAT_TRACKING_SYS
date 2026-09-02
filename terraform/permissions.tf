@@ -1,9 +1,8 @@
-# 1. Create the IAM User
+
 resource "aws_iam_user" "db_operator" {
   name = "rental-db-operator"
 }
 
-# 2. Restrict permissions strictly to DB operations (No table edits/deletions)
 resource "aws_iam_policy" "db_operations_only" {
   name        = "DynamoDBDataOperationsOnly"
   description = "Allows data-plane actions (read, write, update, delete items) only"
@@ -33,18 +32,18 @@ resource "aws_iam_policy" "db_operations_only" {
   })
 }
 
-# 3. Attach the policy to the user
+
 resource "aws_iam_user_policy_attachment" "attach_db_operator" {
   user       = aws_iam_user.db_operator.name
   policy_arn = aws_iam_policy.db_operations_only.arn
 }
 
-# 4. Generate Programmatic Access Keys (Access Key ID & Secret)
+
 resource "aws_iam_access_key" "db_operator_key" {
   user = aws_iam_user.db_operator.name
 }
 
-# 5. Output the credentials so you can share them
+
 output "db_operator_access_key_id" {
   value       = aws_iam_access_key.db_operator_key.id
   description = "Access Key ID for the database operator"
@@ -56,7 +55,6 @@ output "db_operator_secret_access_key" {
   description = "Secret Access Key for the database operator"
 }
 
-# 6. Allow the EC2 instance role to access DynamoDB
 resource "aws_iam_role_policy" "ec2_dynamodb_access" {
   name = "SmartRentalDynamoDBAccess"
   role = "smart-rental-ec2-role"
